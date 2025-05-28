@@ -25,6 +25,7 @@ app.use(session({
     saveUninitialized: false,
   }));
 
+
 export const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
@@ -34,10 +35,10 @@ export const oauth2Client = new google.auth.OAuth2(
 
 
 
-app.use('/api/v1/client'  , clientRouter)
-app.use('/api/v1/team'    , teamRouter  )
-app.use('/api/v1/video'   , videoRouter )
-app.use('/api/v1/yt'      , ytRouter    )
+app.use('/api/client'  , clientRouter)
+app.use('/api/team'    , teamRouter  )
+app.use('/api/video'   , videoRouter )
+app.use('/api/yt'      , ytRouter    )
 
 app.get('/',async (req:any,res:any)=>{
   const response = await axios.get("http://localhost:9998/")

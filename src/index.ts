@@ -13,7 +13,7 @@ connectToDatabase()
     app.listen(PORT,()=>{
         console.log(`Server is up and running on PORT : ${PORT}`)
     })
-    listenToGCP()
+    // listenToGCP()
 })
 .catch((err)=>{
     console.log(`Some unexpected error has occured while connecting to DB : ${err}`)

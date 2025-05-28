@@ -8,6 +8,7 @@ import { createTeam } from "./team.controller"
 export const signup = async (req:any,res:any,next:any) => {
 
    try {
+    
      const {username,email,password,role} = req.body
  
      if(!username || !email || !password || !role){
@@ -31,17 +32,7 @@ export const signup = async (req:any,res:any,next:any) => {
          role
      })
 
-     if(client.role == "EDITOR"){
-
-        const response = await createFolderGCP(username)
-
-        if(!response){
-            await Client.deleteOne({_id:client._id})
-            throw new errResponse("Something went wrong",500)
-        }
-        
-     }
-     else if(client.role == "YOUTUBER"){
+     if(client.role == "YOUTUBER"){
 
        const team = await createTeam(client)
 
@@ -50,10 +41,17 @@ export const signup = async (req:any,res:any,next:any) => {
         throw new errResponse("Something went wrong",500)
        }
 
-        client.teamId = team._id   
+        client.teamId = team._id 
+        
+        const response = await createFolderGCP(username)
+
+        if(!response){
+            await Client.deleteOne({_id:client._id})
+            throw new errResponse("Something went wrong",500)
+        }
+
      }
  
-      
      await client.save()
      return res.json(new sucResponse(true,200,"Account Created Successfully",client))
 
