@@ -34,6 +34,10 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         req.session.user  = user
         req.session.video = video 
 
+        console.log(req.session)
+
+        console.log(authorizationUrl)
+
         res.redirect(authorizationUrl);
         
         
@@ -49,6 +53,8 @@ export const upload = async (req:any,res:any,next:any)=>{
         const client = req.session.user 
         const video = req.session.video
 
+        console.log(req.session)
+
    
         if(!client || !video){
           throw new errResponse("Something is wrong",500)
@@ -61,6 +67,8 @@ export const upload = async (req:any,res:any,next:any)=>{
             }
         })
 
+        console.log(team)
+
         if(!team){
             throw new errResponse("Something is wrong",500)
         }
@@ -71,30 +79,31 @@ export const upload = async (req:any,res:any,next:any)=>{
             throw new errResponse("Unauthorized",400)
         }
 
+        console.log(token)
 
         // spwan some container pass video data and token to it 
         // download the video and upload it on youtube
 
-        // PUSH the data to the QUEUE
-        // await axios.post("http://localhost:9998/upload",{
-        //     team,
-        //     client,
-        //     video,
-        //     token
-        // })
-
-        
-        const data = {
+        //PUSH the data to the QUEUE
+        await axios.post("http://localhost:9998/upload",{
             team,
             client,
             video,
             token
-        }
+        })
 
-        await publishMessage(data)
+        
+        // const data = {
+        //     team,
+        //     client,
+        //     video,
+        //     token
+        // }
+
+        // await publishMessage(data)
 
 
-        res.redirect("https://www.youtube.com/")
+        // res.redirect("https://www.youtube.com/")
         
     } catch (error) {
         next(error)

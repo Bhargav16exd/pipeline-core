@@ -24,15 +24,15 @@ const clientSchema = new mongoose.Schema({
         type:String,
         required:true 
     },
-    password:{
-        type:String,
-        required:true,
-        select:false
-    },
     role:{
         type: String,
         enum: ["ADMIN","YOUTUBER","EDITOR"],
         default: "YOUTUBER",
+        required:true,
+        select:false
+    },
+    password:{
+        type:String,
         required:true,
         select:false
     },

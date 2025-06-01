@@ -26,7 +26,8 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
         const video = await Video.create({
             uploader:req.user._id,
             contentType,
-            team:teamId
+            team:teamId,
+            extension:"mov"
         })
 
         //Only Add Id to uniquly identify the video

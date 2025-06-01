@@ -7,8 +7,7 @@ export const createTeam = async (client:any) => {
     try {
 
         const team = await Team.create({
-            youtuber:client._id,
-            teamName:client.username   
+            name:client.username   
         })
 
         if(!team){

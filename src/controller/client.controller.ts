@@ -5,34 +5,44 @@ import sucResponse from "../utils/sucResponse"
 import { createTeam } from "./team.controller"
 
 
+/*
+    Endpoint : /api/client/signup
+    Working  : Creates Account of User
+*/
+
 export const signup = async (req:any,res:any,next:any) => {
 
    try {
     
-     const {username,email,password,role} = req.body
+    const { username , email , password , role } = req.body
  
-     if(!username || !email || !password || !role){
-         throw new errResponse("Kindly Provide all arguments" , 400 )
-     }
+    if(!username || !email || !password || !role){
+       throw new errResponse("Kindly Provide all arguments" , 400 )
+    }
  
-     const clientExist = await Client.findOne({username:username})
+    const clientExist = await Client.findOne({username:username})
  
-     if(clientExist){
+    if(clientExist){
          throw new errResponse("Username already exists",400)
-     }
+    }
 
-     if(role == "ADMIN"){
+    if(role == "ADMIN"){
          throw new errResponse("Unauthorized Operation",400)
-     }
+    }
  
-     const client = await Client.create({
-         username,
-         password,
-         email,
-         role
-     })
+    const client = await Client.create({
+        username,
+        password,
+        email,
+        role
+    })
 
-     if(client.role == "YOUTUBER"){
+
+    /*
+        If the user is an Youtube Init the Team and Cloud Storage
+    */
+
+    if(client.role == "YOUTUBER"){
 
        const team = await createTeam(client)
 
@@ -50,17 +60,21 @@ export const signup = async (req:any,res:any,next:any) => {
             throw new errResponse("Something went wrong",500)
         }
 
-     }
+    }
  
-     await client.save()
-     return res.json(new sucResponse(true,200,"Account Created Successfully",client))
+    await client.save()
+    return res.json(new sucResponse(true,200,"Account Created Successfully"))
 
    } catch (error) { 
-    
       next(error)
-
    }
 }
+
+
+/*
+    Endpoint : /api/client/signin
+    Working  : Logins User
+*/
 
 export const signin = async(req:any,res:any,next:any)=>{
 
@@ -104,6 +118,11 @@ export const signin = async(req:any,res:any,next:any)=>{
     }
 
 }
+
+/*
+    Endpoint : /api/client/logout
+    Working  : Logout User
+*/
 
 export const logout = async(req:any,res:any,next:any)=>{
 

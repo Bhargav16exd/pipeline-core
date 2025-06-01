@@ -1,14 +1,25 @@
 import mongoose, { Types } from "mongoose";
 
-const videoSchema = new mongoose.Schema({
+/*
+    Title : Defines Mongoose Schema for Video
+    Need  : Used to Define Data of Video that are being uploaded to Cloud Provider
+*/
 
-    uploader:{
+const videoSchema = new mongoose.Schema({
+    
+    teamId:{
+        type:Types.ObjectId,
+        ref:"Team"
+    },
+    uploadedBy:{
         type:Types.ObjectId,
         ref:"Client"
     },
-    team:{
-        type:Types.ObjectId,
-        ref:"Team"
+    cloudUploadStatus:{
+        type: String,
+        enum: ['PENDING','UPLOADED'],
+        default: 'PENDING',
+        required:true
     },
     approved:{
         type:Boolean,
@@ -17,21 +28,6 @@ const videoSchema = new mongoose.Schema({
     pending:{
         type:Boolean,
         default:true
-    },
-    videoName:{
-        type:String,
-    },
-    contentType:{
-        type:String,
-        required:true
-    },
-    uploaded:{
-        type:Boolean,
-        default:false
-    },
-    extension:{
-        type:String,
-        required:true
     }
 
 },

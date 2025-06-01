@@ -1,29 +1,35 @@
 import mongoose, {Types} from "mongoose";
 
 
+/*
+    Title : Defines Mongoose Schema for Team
+    Need  : Used to Define Data of Team 
+*/
+
+
 const teamSchema = new mongoose.Schema({
 
-    youtuber:{
-        type:Types.ObjectId,
-        ref:"Client",
+    name:{
+        type : String,
         required:true
     },
     editor:[{
         type:Types.ObjectId,
         ref:"Client",
-        unique:true
+        unique:true,
+        required:false
     }],
-    teamName:{
-        type:String,
-    },
-    videoApproved:{
+    approvedVideos:{
         type:Number,
-        default:0
+        default:0,
+        required:true
     },
-    videoPending:{
+    pendingVideos:{
         type:Number,
-        default:0
+        default:0,
+        required:true
     }
+
 })
 
 export const Team = mongoose.model("Team",teamSchema)
