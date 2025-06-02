@@ -16,8 +16,7 @@ const teamSchema = new mongoose.Schema({
     editor:[{
         type:Types.ObjectId,
         ref:"Client",
-        unique:true,
-        required:false
+        unique:false
     }],
     approvedVideos:{
         type:Number,

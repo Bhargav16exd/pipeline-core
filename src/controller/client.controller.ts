@@ -1,13 +1,15 @@
 import { Client } from "../models/client.model"
 import createFolderGCP from "../services/create.folder.gcp"
+import { createTeam } from "../services/create.team.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
-import { createTeam } from "./team.controller"
+
 
 
 /*
     Endpoint : /api/client/signup
     Working  : Creates Account of User
+    Working Class : API Controller
 */
 
 export const signup = async (req:any,res:any,next:any) => {

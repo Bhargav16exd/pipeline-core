@@ -1,6 +1,10 @@
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 
+/*
+    Working Class : Helper Function
+    Working  : Creates an Team when a new youtuber signup
+*/
 
 export const createTeam = async (client:any) => {
 
