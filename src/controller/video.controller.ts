@@ -4,16 +4,20 @@ import { Video } from "../models/video.model"
 import { generateWriteSignedUrl } from "../services/upload.signurl"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
+import { Client } from "../models/client.model"
 
 
+/*
+    Endpoint : /api/video/upload
+    Working  : Generates a GCP signed URL returns URL
+*/
 
-// Video to be transcoded after uploading to the GCP 
 export const initateUpload = async (req:any,res:any,next:any)=>{
     try {
 
-        const {contentType , name, teamId} = req.body 
-        
-        if(!contentType || !name || !teamId){
+        const {teamId} = req.body 
+
+        if(!teamId){
            throw new errResponse("Please fill all details",400)
         }
 
@@ -22,21 +26,26 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
         if(!team){
             throw new errResponse("No Team exist",400)
         }
+
+        const client = await Client.findOne({teamId:team._id})
+
+        const {username} : any = client
+
+        if(!username || !client){
+            throw new errResponse("No Team Lead Exist",400)
+        }
         
         const video = await Video.create({
-            uploader:req.user._id,
-            contentType,
-            team:teamId,
-            extension:"mov"
+            uploadedBy:req.user._id,
+            teamId,
         })
 
         //Only Add Id to uniquly identify the video
+        const videoName = video._id
 
-        const videoName = name + "-" + `${video._id}`
-        video.videoName = videoName
         await video.save()
 
-        const url = await generateWriteSignedUrl(req.user,contentType,videoName)
+        const url = await generateWriteSignedUrl(videoName,username)
 
         if(!url){
             throw new errResponse("Something went wrong",500)
@@ -51,8 +60,63 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
     }
 }
 
+/*
+    Endpoint : /api/video/status
+    Working  : Updates the status of Video Upload from "PENDING" -> "UPLOADED"
+*/
+
+export const updateUploadStatus = async (req:any,res:any,next:any)=>{
+
+    try {
+
+        const config = req.body 
+
+        if(!config){
+            throw new errResponse("Invalid Request",404)
+        }
+        
+        const {url} = config
+
+        if(!url){
+            throw new errResponse("Internal Server Error Contact Dev Immediately",500)
+        }
+
+        const part = url.split('pipeline_oneminus/')[1].split('/')[1]
+
+        const id = part.split('?')[0]
+
+        if(!id){
+            throw new errResponse("Internal Server Error Contact Dev Immediately",500)
+        }
+
+
+        const video = await Video.findByIdAndUpdate(id,{
+            cloudUploadStatus:"UPLOADED"
+        },{new:true}).select("+teamId")
+
+        if(!video){
+            throw new errResponse("Internal Server Error",500)
+        }
+
+        const team = await Team.findByIdAndUpdate(video.teamId,{
+            $inc : { pendingVideos : 1 }
+        },{new:true})
+
+        if(!team){
+            throw new errResponse("Internal Server Error",500)
+        }
+    
+        return res.json(new sucResponse(true,204,"Status Updated Sucess"))
+
+    } catch (error) {
+        next(error)
+    }
+
+}
+
 /* 
-Function Fetches pending video that are waiting for the approval of the Youtuber for upload 
+    Endpoint : /api/video/pending
+    Working  :  Gets all Pending Videos
 */
 
 export const getPendingVideos = async (req:any,res:any,next:any) => {
@@ -80,7 +144,7 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
         }
     
         const video = await Video.find({
-            team:team._id,
+            teamId:team._id,
             pending:true,
             approved:false
         })
@@ -98,7 +162,8 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
 }
 
 /* 
-    Function Fetches videos that are approved by the Youtuber
+    Endpoint : /api/video/approved
+    Working  :  Gets all Approved Videos
 */
 
 export const getApprovedVideos = async (req:any,res:any,next:any) => {
@@ -126,7 +191,7 @@ export const getApprovedVideos = async (req:any,res:any,next:any) => {
         }
     
         const video = await Video.find({
-            team:team._id,
+            teamId:team._id,
             pending:false,
             approved:true
         })
@@ -144,6 +209,7 @@ export const getApprovedVideos = async (req:any,res:any,next:any) => {
 }
 
 
+//V2
 // Watch a video
 export const watchVideo = async (req:any,res:any,next:any)=>{
     // Get user data speed
@@ -151,6 +217,7 @@ export const watchVideo = async (req:any,res:any,next:any)=>{
     // serve the video as per data speed
 }
 
+//V3
 // Get Backedup video
 export const getBackedupVideo = async (req:any,res:any,next:any)=>{
 

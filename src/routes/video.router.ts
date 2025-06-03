@@ -1,14 +1,16 @@
 import { Router } from "express";
-import { getApprovedVideos, getPendingVideos, initateUpload } from "../controller/video.controller";
+import { getApprovedVideos, getPendingVideos, initateUpload, updateUploadStatus } from "../controller/video.controller";
 import { authMiddleware, isEditor } from "../middleware/auth.middleware";
 
 
 const router = Router()
 
 
-router.route('/initiateUpload') .post(authMiddleware,isEditor,initateUpload)
-router.route('/pendingVideos' ) .get(authMiddleware,getPendingVideos       )
-router.route('/approvedVideos') .get(authMiddleware,getApprovedVideos      )
+router.route('/upload') .post(authMiddleware,isEditor,initateUpload)
+router.route('/pending' ) .get(authMiddleware,getPendingVideos       )
+router.route('/approved') .get(authMiddleware,getApprovedVideos      )
 
+//Add Authentication When in Production 
+router.route('/status').post(authMiddleware,updateUploadStatus)
 
 export default router
