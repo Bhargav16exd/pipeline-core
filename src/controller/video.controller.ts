@@ -14,9 +14,9 @@ import { Client } from "../models/client.model"
 export const initateUpload = async (req:any,res:any,next:any)=>{
     try {
 
-        const {teamId} = req.body 
+        const {teamId,extension} = req.body 
 
-        if(!teamId){
+        if(!teamId || !extension){
            throw new errResponse("Please fill all details",400)
         }
 
@@ -37,11 +37,11 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
         const video = await Video.create({
             uploadedBy:req.user._id,
             teamId,
+            extension
         })
 
         //Only Add Id to uniquly identify the video
         const videoName = video._id
-
         await video.save()
 
         const url = await generateWriteSignedUrl(videoName,username)

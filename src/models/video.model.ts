@@ -21,6 +21,10 @@ const videoSchema = new mongoose.Schema({
         default: 'PENDING',
         required:true
     },
+    extension:{
+        type:String,
+        required:true
+    },
     approved:{
         type:Boolean,
         default:false,

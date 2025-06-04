@@ -5,6 +5,8 @@ import { generateAuthorizationUrl} from "../services/auth"
 import { getGoogleAuthToken } from "../services/auth.token"
 import errResponse from "../utils/errResponse"
 import { YtMetaData } from "../models/ytMetaData.model"
+import exp from "constants"
+import sucResponse from "../utils/sucResponse"
 
 export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
 
@@ -69,9 +71,9 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
 
         //Redirect
         res.redirect(authorizationUrl);
-        
+
         console.log(authorizationUrl)
-        
+                
     } catch (error) {
         next(error)
     }
@@ -84,9 +86,6 @@ export const upload = async (req:any,res:any,next:any)=>{
         const client = req.session.user 
         const video = req.session.video
         const YT_META_DATA =  req.session.ytMetaData
-
-        console.log(req.session)
-
    
         if(!client || !video || !YT_META_DATA){
           throw new errResponse("Something is wrong",500)
@@ -109,13 +108,9 @@ export const upload = async (req:any,res:any,next:any)=>{
             throw new errResponse("Unauthorized",400)
         }
 
-        console.log(token)
 
-        // spwan some container pass video data and token to it 
         // download the video and upload it on youtube
-
-        //PUSH the data to the QUEUE
-        await axios.post("http://localhost:9998/upload",{
+        axios.post("http://localhost:9998/upload",{
             team,
             client,
             video,
@@ -123,23 +118,43 @@ export const upload = async (req:any,res:any,next:any)=>{
             YT_META_DATA
         })
 
-        
-        // const data = {
-        //     team,
-        //     client,
-        //     video,
-        //     token
-        // }
 
-        // await publishMessage(data)
+        res.redirect('https://www.youtube.com') 
 
-
-        // res.redirect("https://www.youtube.com/")
         
     } catch (error) {
         next(error)
     }
 }
 
+export const status = async(req:any,res:any,next:any)=>{
 
+    try {
+
+        const { team, video ,YT_META_DATA } = req.body
+
+        if(!team || !video || !YT_META_DATA){
+            throw new errResponse("Internal Server Error",500)
+        }
+
+
+        const res1 = await Video.findByIdAndUpdate(video._id , {
+            approved:true,
+            pending:false
+        })
+
+        const ress = await Team.findByIdAndUpdate(team._id ,{
+            $inc : {
+                approvedVideos : 1,
+                pendingVideos  : -1
+            },
+        })
+
+        return res.json(new sucResponse(true,200,"Video Uploaded to Youtube Successfully"))
+        
+    } catch (error) {
+        next(error)
+    }
+
+}
 
