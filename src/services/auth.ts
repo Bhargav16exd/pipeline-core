@@ -20,21 +20,18 @@ import { oauth2Client } from "../app";
 export const generateAuthorizationUrl = async () =>{
     try {
 
-        const scopes = [
-            'https://www.googleapis.com/auth/youtube.upload'
-        ];
+        const scopes : any = [ `${process.env.YOUTUBE_UPLOAD_SCOPE}` ];
         
         const state = crypto.randomBytes(32).toString('hex');
-        
         
         const authorizationUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: scopes,
             include_granted_scopes: true,
             state:state
-          });
+        });
 
-          return {authorizationUrl,state}
+        return {authorizationUrl,state}
         
     } catch (error) {
         console.log(error)

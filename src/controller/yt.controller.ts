@@ -1,12 +1,10 @@
 import axios from "axios"
-import { Client } from "../models/client.model"
 import { Team } from "../models/team.model"
 import { Video } from "../models/video.model"
 import { generateAuthorizationUrl} from "../services/auth"
 import { getGoogleAuthToken } from "../services/auth.token"
 import errResponse from "../utils/errResponse"
-import { oauth2Client } from "../app"
-
+import { YtMetaData } from "../models/ytMetaData.model"
 
 export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
 
@@ -19,27 +17,60 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         // Download video from GCP 
         // Uploading on YT
 
-        const {id,videoId} = req.params
+        const {title , description , tags , privacyStatus , notifySubscribers, videoId} = req.body
 
-        const user = await Client.findById(id)
-        const video = await Video.findById(videoId)
+        if(!title || !description || !privacyStatus || !notifySubscribers || !videoId){
+            throw new errResponse("Incomplete Inputs All Inputs Are Required",400)
+        }
 
-        //const user = req.user
+        //Fetch Data Regarding Video 
+        const video = await Video.findOne({_id:videoId , cloudUploadStatus:"UPLOADED"})
 
+        if(!video){
+            throw new errResponse("Invalid Video Id",400)
+        }
+
+
+        //Create a YT Meta Data Entry
+        const YT_META_DATA = await YtMetaData.create({
+            title,
+            description,
+            tags,
+            privacyStatus,
+            notifySubscribers,
+            videoId:video._id,
+            youtuber:req.user._id
+        })
+
+        await YT_META_DATA.save()
+
+
+        if(!YT_META_DATA){
+            throw new errResponse("Internal Server Error",500)
+        }
+
+
+        //Get Authorization URL and State
         const {authorizationUrl,state} :any = await generateAuthorizationUrl()
+
+    
+        if(!authorizationUrl || !state){
+            throw new errResponse("Internal Server Error",500)
+        }
+
 
         req.session.state = state
 
+
         // Encrypt this 
-        req.session.user  = user
+        req.session.user  = req.user
         req.session.video = video 
+        req.session.ytMetaData = YT_META_DATA
 
-        console.log(req.session)
-
-        console.log(authorizationUrl)
-
+        //Redirect
         res.redirect(authorizationUrl);
         
+        console.log(authorizationUrl)
         
     } catch (error) {
         next(error)
@@ -52,26 +83,25 @@ export const upload = async (req:any,res:any,next:any)=>{
 
         const client = req.session.user 
         const video = req.session.video
+        const YT_META_DATA =  req.session.ytMetaData
 
         console.log(req.session)
 
    
-        if(!client || !video){
+        if(!client || !video || !YT_META_DATA){
           throw new errResponse("Something is wrong",500)
         }
 
         const team  = await Team.findOne({
-            youtuber:client._id,
             editor:{
-                $elemMatch:{$eq:video.uploader}
+                $elemMatch:{$eq:video.uploadedBy}
             }
         })
-
-        console.log(team)
 
         if(!team){
             throw new errResponse("Something is wrong",500)
         }
+
 
         const token = await getGoogleAuthToken(req,res)
         
@@ -89,7 +119,8 @@ export const upload = async (req:any,res:any,next:any)=>{
             team,
             client,
             video,
-            token
+            token,
+            YT_META_DATA
         })
 
         
@@ -110,27 +141,5 @@ export const upload = async (req:any,res:any,next:any)=>{
     }
 }
 
-import {PubSub} from '@google-cloud/pubsub';
 
-// Creates a client; cache this for further use
-const pubSubClient = new PubSub();
 
-async function publishMessage(data:any) {
-
-    //@ts-ignore
-    const dataBuffer = Buffer.from(JSON.stringify(data));
-
-   console.log(dataBuffer)
-
-  const topic = pubSubClient.topic('projects/ultimate-task-437523-b9/topics/service-queue');
-
-  try {
-    const messageId =  await topic.publishMessage({data: dataBuffer});
-    console.log(`Message ${messageId} published.`);
-  } catch (error) {
-    console.error(
-      `Received error while publishing: ${(error as Error).message}`
-    );
-    process.exitCode = 1;
-  }
-}

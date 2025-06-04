@@ -1,4 +1,3 @@
-import { upload } from "@google-cloud/storage/build/cjs/src/resumable-upload"
 import { Team } from "../models/team.model"
 import { Video } from "../models/video.model"
 import { generateWriteSignedUrl } from "../services/upload.signurl"

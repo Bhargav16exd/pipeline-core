@@ -7,7 +7,7 @@ import { authMiddleware, isYoutuber } from "../middleware/auth.middleware";
 
 const router = Router()
 
-router.route('/upload/:id/:videoId').get(uploadVideoOnYoutube)
+router.route('/upload').post(authMiddleware,isYoutuber,uploadVideoOnYoutube)
 router.route('/oAuth2Callback').get(upload)
 
 
