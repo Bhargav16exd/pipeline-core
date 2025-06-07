@@ -5,9 +5,15 @@ import errResponse from "../utils/errResponse"
 export const authMiddleware = async (req:any,res:any,next:any)=>{
 
     try {
-        
-          const {token}    = req.cookies
+
+          let token
+          token  = req.cookies.token
           const JWT_SECRET = process.env.JWT_SECRET as any 
+
+          if(!token){
+            token = req.header("Authorization").split(" ")[1]
+          }
+
       //  const token = req.header("Authorization").split[" "] req.header("Authorization") gives single header req.headers give all headers 
 
           if(!token){

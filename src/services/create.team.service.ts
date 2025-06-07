@@ -1,3 +1,4 @@
+import { Mongoose } from "mongoose"
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 
@@ -11,7 +12,7 @@ export const createTeam = async (client:any) => {
     try {
 
         const team = await Team.create({
-            name:client.username   
+            name:client.username,
         })
 
         if(!team){

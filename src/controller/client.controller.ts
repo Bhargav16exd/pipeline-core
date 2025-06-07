@@ -82,20 +82,20 @@ export const signin = async(req:any,res:any,next:any)=>{
 
     try {
         
-        const {username,password} = req.body 
+        const { username, password:inputPassword } = req.body 
         
-        if(!username || !password){
+        if(!username || !inputPassword){
             throw new errResponse("Please Provide all fields",400)
         }
 
-        const client = await Client.findOne({username}).select("+password")
+        const client = await Client.findOne({username}).select("+password +role")
 
         if(!client){
             throw new errResponse("User doesnt exist",400)
         }
 
      
-        const isMatch = await client.isPasswordValid(password)
+        const isMatch = await client.isPasswordValid(inputPassword)
 
         if(!isMatch){
             throw new errResponse("Incorrect Password",400)
@@ -110,9 +110,18 @@ export const signin = async(req:any,res:any,next:any)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000
         }
 
+        
+        const response : any = {
+            username:client.username,
+            email:client.email,
+            role:client.role,
+            teamId:client.teamId
+        }
+
+
         return res
         .cookie("token",token,options)
-        .json(new sucResponse(true,200,"Login Success",{token}))
+        .json(new sucResponse(true,200,"Login Success",{token,response}))
 
 
     } catch (error) {

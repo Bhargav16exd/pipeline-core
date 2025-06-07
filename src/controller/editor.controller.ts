@@ -2,6 +2,7 @@ import sucResponse from "../utils/sucResponse"
 import { Client } from "../models/client.model"
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
+import exp from "constants"
 
 
 // Routes Authorized to Youtubers only
@@ -16,9 +17,9 @@ export const addEditor = async (req:any , res:any , next:any) => {
 
     try {
 
-        const {editorId , teamId} = req.body 
+        const {username , teamId} = req.body 
 
-        const editor = await Client.findById(editorId).select("+role")
+        const editor = await Client.findOne({username}).select("+role")
 
         if(!editor){
             throw new errResponse("No Such user exists",400)
@@ -31,7 +32,7 @@ export const addEditor = async (req:any , res:any , next:any) => {
         const team : any = await Team.findByIdAndUpdate(
         teamId ,
         {  
-            $addToSet: { editor : editorId}
+            $addToSet: { editor : editor._id}
         },
         {new:true}) 
  
@@ -215,3 +216,4 @@ export const search = async (req:any,res:any,next:any)=>{
         next(error)
     }
 }
+
