@@ -6,7 +6,7 @@ import { authMiddleware, isEditor } from "../middleware/auth.middleware";
 const router = Router()
 
 
-router.route('/upload') .post(authMiddleware,isEditor,initateUpload)
+router.route('/upload') .post(initateUpload)
 router.route('/pending' ) .get(authMiddleware,getPendingVideos       )
 router.route('/approved') .get(authMiddleware,getApprovedVideos      )
 router.route('/status').post(updateUploadStatus)

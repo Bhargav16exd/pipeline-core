@@ -1,6 +1,5 @@
 import mongoose, {Types} from "mongoose";
 
-
 /*
     Title : Defines Mongoose Schema for Team
     Need  : Used to Define Data of Team 
@@ -15,7 +14,7 @@ const teamSchema = new mongoose.Schema({
     },
     editor:[{
         type:Types.ObjectId,
-        ref:"Client",
+        ref:"Editor",
     }],
     approvedVideos:{
         type:Number,

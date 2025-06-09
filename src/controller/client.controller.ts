@@ -1,4 +1,5 @@
 import { Client } from "../models/client.model"
+import { Editor } from "../models/editor.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
 import errResponse from "../utils/errResponse"
@@ -90,7 +91,11 @@ export const signin = async(req:any,res:any,next:any)=>{
             throw new errResponse("Please Provide all fields",400)
         }
 
-        const client : any = await Client.findOne({username}).select("+password +role")
+        let client : any = await Client.findOne({username}).select("+password +role")
+
+        if(!client){
+            client = await Editor.findOne({username}).select("+password +role")
+        }
 
         if(!client){
             throw new errResponse("User doesnt exist",400)

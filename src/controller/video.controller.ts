@@ -35,7 +35,7 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
         }
         
         const video = await Video.create({
-            uploadedBy:req.user._id,
+            uploadedBy:"6846aa8e18c7bf9c0f00000e",
             teamId,
             extension
         })

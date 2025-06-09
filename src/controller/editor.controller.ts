@@ -156,6 +156,8 @@ export const search = async (req:any,res:any,next:any)=>{
             throw new errResponse("Empty Inputs",400)
         }
 
+        console.log(username)
+
         const editors = await Editor.find({
             username: {
                 $regex: new RegExp(username),

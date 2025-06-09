@@ -1,5 +1,7 @@
 import { Client } from "../models/client.model"
+import { Editor } from "../models/editor.model"
 import { Team } from "../models/team.model"
+import { Video } from "../models/video.model"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 
@@ -22,7 +24,37 @@ export const info = async (req:any,res:any,next:any)=>{
             throw new errResponse("Invalid Team Id" , 400)
         }
 
-        return res.json(new sucResponse(true,200,"Team Fetched Success",team))
+        const editorUploadData : any = await Promise.all(team.editor.map(async (editor:any)=>{
+
+            const video = await Video.find({uploadedBy:editor._id})
+            const videoUploaded = video.length;
+
+            let videoPending = 0;
+            let videoApproved = 0;
+
+            video.map((el:any)=>{
+
+                if(el.pending == true){
+                    videoPending++;
+                }
+                if(el.approved == true){
+                    videoApproved++;
+                }
+
+            })
+
+            return {
+                videoUploaded:videoUploaded,
+                videoPending,
+                videoApproved
+            };
+            
+
+
+        }))
+
+        
+        return res.json(new sucResponse(true,200,"Team Fetched Success",{team,editorUploadData}))
         
 
     } catch (error) {
@@ -43,8 +75,9 @@ export const addEditor = async (req:any , res:any , next:any) => {
 
         const {username , teamId} = req.body 
 
-        const editor = await Client.findOneAndUpdate({username},{
-            isInTeam:true
+        const editor = await Editor.findOneAndUpdate({username},{
+            isInTeam:true,
+            teamId:teamId
         },{new:true}).select("+role")
 
         if(!editor){
@@ -85,8 +118,9 @@ export const removeEditor = async (req:any ,res:any ,next:any) => {
         
             const {editorId ,teamId} = req.body 
         
-            const editor = await Client.findByIdAndUpdate(editorId,{
-                isInTeam:false
+            const editor = await Editor.findByIdAndUpdate(editorId,{
+                isInTeam:false,
+                teamId:null
             }).select("+role")
         
             if(!editor){

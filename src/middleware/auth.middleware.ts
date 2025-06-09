@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { Client } from "../models/client.model"
 import errResponse from "../utils/errResponse"
+import { Editor } from "../models/editor.model"
 
 export const authMiddleware = async (req:any,res:any,next:any)=>{
 
@@ -26,7 +27,11 @@ export const authMiddleware = async (req:any,res:any,next:any)=>{
             throw new errResponse("Unauthenticated",400)
           }
 
-          const client: any = await Client.findById(_id).select("+role")
+          let client: any = await Client.findById(_id).select("+role")
+
+          if(!client){
+            client = await Editor.findById(_id).select("+role")
+          }
 
           if(!client){
             throw new errResponse("User not found",400)
