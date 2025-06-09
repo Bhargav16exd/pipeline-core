@@ -9,6 +9,7 @@ import ytRouter from "./routes/yt.router"
 import session from "express-session"
 import { google } from "googleapis"
 import axios from "axios"
+import editorRouter from "./routes/editor.router"
 
 
 dotenv.config()
@@ -34,9 +35,8 @@ export const oauth2Client = new google.auth.OAuth2(
 )
 
 
-
-
 app.use('/api/client'  , clientRouter)
+app.use('/api/editor'  , editorRouter )
 app.use('/api/team'    , teamRouter  )
 app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )

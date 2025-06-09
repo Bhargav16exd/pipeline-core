@@ -36,7 +36,8 @@ export const signup = async (req:any,res:any,next:any) => {
         username,
         password,
         email,
-        role
+        role,
+        isInTeam:false
     })
 
 
@@ -63,6 +64,7 @@ export const signup = async (req:any,res:any,next:any) => {
         }
 
     }
+
  
     await client.save()
     return res.json(new sucResponse(true,200,"Account Created Successfully"))
@@ -88,7 +90,7 @@ export const signin = async(req:any,res:any,next:any)=>{
             throw new errResponse("Please Provide all fields",400)
         }
 
-        const client = await Client.findOne({username}).select("+password +role")
+        const client : any = await Client.findOne({username}).select("+password +role")
 
         if(!client){
             throw new errResponse("User doesnt exist",400)
@@ -109,13 +111,13 @@ export const signin = async(req:any,res:any,next:any)=>{
             httpOnly:true ,
             maxAge: 7 * 24 * 60 * 60 * 1000
         }
-
         
         const response : any = {
             username:client.username,
             email:client.email,
             role:client.role,
-            teamId:client.teamId
+            teamId:client.teamId,
+            isInTeam:client.isInTeam
         }
 
 
@@ -156,4 +158,6 @@ export const IAM = async(req:any,res:any,next:any)=>{
      }
 
 }
+
+
 

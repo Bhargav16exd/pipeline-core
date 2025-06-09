@@ -2,93 +2,54 @@ import sucResponse from "../utils/sucResponse"
 import { Client } from "../models/client.model"
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
-import exp from "constants"
+import { Editor } from "../models/editor.model"
+import { uploadImageToAwsS3} from "../services/upload.profile"
 
 
-// Routes Authorized to Youtubers only
 
+export const signup = async (req:any,res:any,next:any) => {
 
-/*
-    Endpoint : /api/team/addEditor
-    Working  : Add Editor To the Team
-*/
-
-export const addEditor = async (req:any , res:any , next:any) => {
-
-    try {
-
-        const {username , teamId} = req.body 
-
-        const editor = await Client.findOne({username}).select("+role")
-
-        if(!editor){
-            throw new errResponse("No Such user exists",400)
-        }
-
-        if(editor.role != "EDITOR"){
-            throw new errResponse("Invalid Request",400)
-        }
-
-        const team : any = await Team.findByIdAndUpdate(
-        teamId ,
-        {  
-            $addToSet: { editor : editor._id}
-        },
-        {new:true}) 
+   try {
+    
+    const { name , about , yearsOfExperience, location, username , email , password } = req.body
+    const profilePicture = req.file
  
-
-        if(!team){
-            throw new errResponse("Something went wrong",500)
-        }
-
-        return res.json(new sucResponse(true,200,"Editor added success",team))
-        
-    } catch (error) {
-        next(error)
+    if(!name || !about || !yearsOfExperience || !location || !username || !email || !password || !profilePicture ){
+       throw new errResponse("Kindly Provide all arguments" , 400 )
+    }
+ 
+    const editorExist = await Editor.findOne({username:username})
+ 
+    if(editorExist){
+        throw new errResponse("Username already exists",400)
     }
 
-}
+    const url = await uploadImageToAwsS3(profilePicture)
 
-/*
-    Endpoint : /api/team/removeEditor
-    Working  : Remove Editor from the team
-*/
-
-export const removeEditor = async (req:any ,res:any ,next:any) => {
-    try {
-        
-            const {editorId ,teamId} = req.body 
-        
-            const editor = await Client.findById(editorId).select("+role")
-        
-            if(!editor){
-                throw new errResponse("No Such user exists",400)
-            }
-        
-            if(editor.role != "EDITOR"){
-                throw new errResponse("Invalid Request",400)
-            }
-        
-            const team = await Team.findByIdAndUpdate(
-                teamId,
-                {
-                    $pull : {editor:editorId}
-                },
-                {new:true}
-            )
-        
-            if(!team){
-                throw new errResponse("No Team found",400)
-            }
-
-            return res.json(new sucResponse(true ,200 , "Editor Removed Success",team))
-
-    } catch (error) {
-            next(error)
+    if(!url){
+        throw new errResponse("Internal Server Error",500)
     }
 
-}
+    //Get Uploaded URL
+    const editor = await Editor.create({
+        name,
+        username,
+        password,
+        email,
+        about,
+        yearsOfExperience,
+        location,
+        profile:url,
+        isInTeam:false
+    })
+ 
+    await editor.save()
+    return res.json(new sucResponse(true,200,"Account Created Successfully"))
 
+   } catch (error) { 
+      next(error)
+   }
+}
 
 /*
     Endpoint : /api/team/exit
@@ -122,7 +83,6 @@ export const exit = async (req:any ,res:any ,next:any) => {
 
 }
 
-
 /*
     Endpoint : /api/team/editors/:skip
     Working  : Get All Editors Paginated
@@ -136,7 +96,7 @@ export const getAllEditors = async (req:any,res:any,next:any)=>{
         const {skip} = req.params
         const limit = 10 
 
-        const editors = await Client.find({
+        const editors = await Editor.find({
             role:"EDITOR"
         }).limit(limit).skip(skip)
 
@@ -151,7 +111,6 @@ export const getAllEditors = async (req:any,res:any,next:any)=>{
    }
 
 }
-
 
 /*
     Endpoint : /api/team/editor/:id
@@ -197,7 +156,7 @@ export const search = async (req:any,res:any,next:any)=>{
             throw new errResponse("Empty Inputs",400)
         }
 
-        const editors = await Client.find({
+        const editors = await Editor.find({
             username: {
                 $regex: new RegExp(username),
             },

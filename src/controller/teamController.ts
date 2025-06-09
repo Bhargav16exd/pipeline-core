@@ -1,3 +1,4 @@
+import { Client } from "../models/client.model"
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
@@ -27,4 +28,91 @@ export const info = async (req:any,res:any,next:any)=>{
     } catch (error) {
         next(error)
     }
+}
+
+// Routes Authorized to Youtubers only
+
+/*
+    Endpoint : /api/team/addEditor
+    Working  : Add Editor To the Team
+*/
+
+export const addEditor = async (req:any , res:any , next:any) => {
+
+    try {
+
+        const {username , teamId} = req.body 
+
+        const editor = await Client.findOneAndUpdate({username},{
+            isInTeam:true
+        },{new:true}).select("+role")
+
+        if(!editor){
+            throw new errResponse("No Such user exists",400)
+        }
+
+        if(editor.role != "EDITOR"){
+            throw new errResponse("Invalid Request",400)
+        }
+
+        const team : any = await Team.findByIdAndUpdate(
+        teamId ,
+        {  
+            $addToSet: { editor : editor._id}
+        },
+        {new:true}) 
+ 
+
+        if(!team){
+            throw new errResponse("Something went wrong",500)
+        }
+
+        return res.json(new sucResponse(true,200,"Editor added success",team))
+        
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+/*
+    Endpoint : /api/team/removeEditor
+    Working  : Remove Editor from the team
+*/
+
+export const removeEditor = async (req:any ,res:any ,next:any) => {
+    try {
+        
+            const {editorId ,teamId} = req.body 
+        
+            const editor = await Client.findByIdAndUpdate(editorId,{
+                isInTeam:false
+            }).select("+role")
+        
+            if(!editor){
+                throw new errResponse("No Such user exists",400)
+            }
+        
+            if(editor.role != "EDITOR"){
+                throw new errResponse("Invalid Request",400)
+            }
+        
+            const team = await Team.findByIdAndUpdate(
+                teamId,
+                {
+                    $pull : {editor:editorId}
+                },
+                {new:true}
+            )
+        
+            if(!team){
+                throw new errResponse("No Team found",400)
+            }
+
+            return res.json(new sucResponse(true ,200 , "Editor Removed Success",team))
+
+    } catch (error) {
+            next(error)
+    }
+
 }
