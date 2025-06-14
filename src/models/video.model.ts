@@ -13,7 +13,7 @@ const videoSchema = new mongoose.Schema({
     },
     uploadedBy:{
         type:Types.ObjectId,
-        ref:"Client"
+        ref:"Editor"
     },
     cloudUploadStatus:{
         type: String,
@@ -22,6 +22,18 @@ const videoSchema = new mongoose.Schema({
         required:true
     },
     extension:{
+        type:String,
+        required:true
+    },
+    title:{
+        type:String,
+        required:true
+    },
+    comment:{
+        type:String,
+        required:true
+    },
+    maximumVideoQuality:{
         type:String,
         required:true
     },

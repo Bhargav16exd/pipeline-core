@@ -4,6 +4,7 @@ import { generateWriteSignedUrl } from "../services/upload.signurl"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 import { Client } from "../models/client.model"
+import getVideoMetaData from "../services/list.folder.objects"
 
 
 /*
@@ -14,9 +15,9 @@ import { Client } from "../models/client.model"
 export const initateUpload = async (req:any,res:any,next:any)=>{
     try {
 
-        const {teamId,extension} = req.body 
-
-        if(!teamId || !extension){
+        const { teamId , extension , title , comment , maximumVideoQuality } = req.body 
+ 
+        if(!teamId || !extension || !title || !comment || !maximumVideoQuality){
            throw new errResponse("Please fill all details",400)
         }
 
@@ -35,9 +36,12 @@ export const initateUpload = async (req:any,res:any,next:any)=>{
         }
         
         const video = await Video.create({
-            uploadedBy:"6846aa8e18c7bf9c0f00000e",
+            uploadedBy:req.user._id,
             teamId,
-            extension
+            extension,
+            title,
+            comment,
+            maximumVideoQuality
         })
 
         //Only Add Id to uniquly identify the video
@@ -121,13 +125,14 @@ export const updateUploadStatus = async (req:any,res:any,next:any)=>{
 export const getPendingVideos = async (req:any,res:any,next:any) => {
 
     try {
+
         const user = req.user 
-        let team  = null
+        let team : any  = null
+
+        console.log(user)
     
         if(user.role == "YOUTUBER"){
-            team = await Team.findOne({
-                youtuber:user._id
-            })
+            team = await Team.findById(user.teamId)
         }
         else if(user.role=="EDITOR"){
             team = await Team.findOne({
@@ -145,15 +150,35 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
         const video = await Video.find({
             teamId:team._id,
             pending:true,
-            approved:false
+            approved:false,
+            cloudUploadStatus:"UPLOADED"
+        }).populate({
+            path:'uploadedBy',
+            select: 'name'
         })
-    
+
         if(video.length == 0 ){
             return res.json(new sucResponse(true,200,"No Pending Videos Exist"))
         }
-        else if(video.length > 0){
-            return res.json(new sucResponse(true,200,"Pending Videos ",video))
+
+        
+        const result = await getVideoMetaData(team.name)
+        
+        const videos = video.map((el) => {
+            const metadata = result.find((en) => en.name === `${team.name}/${el._id.toString()}`);
+            
+            if (metadata) {
+                return {
+                    ...el.toObject(),
+                    size: metadata.size
+                };
+            } 
+        });
+
+        if(videos.length > 0){
+            return res.json(new sucResponse(true,200,"Pending Videos ",videos))
         }
+
     } catch (error) {
         next(error)   
     }
