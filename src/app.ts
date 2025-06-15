@@ -20,12 +20,15 @@ const app = express()
 app.use(cookieParser())
 app.use(urlencoded({extended:true}))
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  credentials:true,
+  origin:process.env.ORIGIN_URL
+}))
 app.use(session({
     secret: 'your_secure_secret_key',
     resave: false,
     saveUninitialized: false,
-  }));
+}));
 
 
 export const oauth2Client = new google.auth.OAuth2(

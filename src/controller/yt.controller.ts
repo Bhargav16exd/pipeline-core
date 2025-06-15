@@ -71,9 +71,8 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         req.session.ytMetaData = YT_META_DATA
 
         //Redirect
-        res.redirect(authorizationUrl);
+        return res.json(new sucResponse(true,200,"Video Upload Initiated",authorizationUrl))
 
-        console.log(authorizationUrl)
                 
     } catch (error) {
         next(error)
@@ -87,6 +86,9 @@ export const upload = async (req:any,res:any,next:any)=>{
         const client = req.session.user 
         const video = req.session.video
         const YT_META_DATA =  req.session.ytMetaData
+
+
+        console.log(req.session)
    
         if(!client || !video || !YT_META_DATA){
           throw new errResponse("Something is wrong",500)
