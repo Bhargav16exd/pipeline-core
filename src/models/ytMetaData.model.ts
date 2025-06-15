@@ -41,6 +41,10 @@ const ytMetaDataSchema = new mongoose.Schema({
         ref:"Video",
         required:true
     },
+    thumbnail:{
+        type:String,
+        required:true
+    }
 
 },
 {

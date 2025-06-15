@@ -19,9 +19,9 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         // Download video from GCP 
         // Uploading on YT
 
-        const {title , description , tags , privacyStatus , notifySubscribers, videoId} = req.body
+        const {title , description , tags , privacyStatus , notifySubscribers, videoId , thumbnail } = req.body
 
-        if(!title || !description || !privacyStatus || !notifySubscribers || !videoId){
+        if(!title || !description || !privacyStatus || !notifySubscribers || !videoId || !thumbnail){
             throw new errResponse("Incomplete Inputs All Inputs Are Required",400)
         }
 
@@ -41,7 +41,8 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
             privacyStatus,
             notifySubscribers,
             videoId:video._id,
-            youtuber:req.user._id
+            youtuber:req.user._id,
+            thumbnail:thumbnail
         })
 
         await YT_META_DATA.save()
