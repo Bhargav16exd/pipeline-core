@@ -7,6 +7,8 @@ import errResponse from "../utils/errResponse"
 import { YtMetaData } from "../models/ytMetaData.model"
 import exp from "constants"
 import sucResponse from "../utils/sucResponse"
+import { oauth2Client } from "../app"
+import { google } from "googleapis"
 
 export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
 
@@ -121,8 +123,9 @@ export const upload = async (req:any,res:any,next:any)=>{
             YT_META_DATA
         })
 
+        const channelId = await getChannelId(token)
 
-        res.redirect('https://www.youtube.com') 
+        return res.redirect(`https://studio.youtube.com/channel/${channelId}/videos/`) 
 
         
     } catch (error) {
@@ -161,3 +164,25 @@ export const status = async(req:any,res:any,next:any)=>{
 
 }
 
+async function getChannelId (token:any){
+
+    oauth2Client.setCredentials({
+            access_token: token.access_token,
+            refresh_token: token.refresh_token
+    });
+
+    const youtube = google.youtube({ version: 'v3', auth: oauth2Client });
+    
+    
+    const channel = await youtube.channels.list({
+        //@ts-ignore
+        part:"snippet,contentDetails,statistics",
+        mine:true
+    })
+
+    //@ts-ignore
+   const channelId = channel.data.items[0].id 
+
+   return channelId
+    
+}

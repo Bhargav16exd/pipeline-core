@@ -20,7 +20,7 @@ import { oauth2Client } from "../app";
 export const generateAuthorizationUrl = async () =>{
     try {
 
-        const scopes : any = [ `${process.env.YOUTUBE_UPLOAD_SCOPE}` ];
+        const scopes : any = [ `${process.env.YOUTUBE_UPLOAD_SCOPE}` , `${process.env.YOUTUBE_CHANNEL_READ}`  ];
         
         const state = crypto.randomBytes(32).toString('hex');
         
