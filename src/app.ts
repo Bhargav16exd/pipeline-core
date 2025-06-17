@@ -10,6 +10,7 @@ import session from "express-session"
 import { google } from "googleapis"
 import axios from "axios"
 import editorRouter from "./routes/editor.router"
+import rateLimit from "express-rate-limit"
 
 
 dotenv.config()
@@ -31,12 +32,20 @@ app.use(session({
 }));
 
 
+
 export const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
     process.env.REDIRECT_URL
 )
 
+//Rate Limiter
+const limiter = rateLimit({
+  windowMs:1000*60*5,
+  max:100
+})
+
+app.use(limiter)
 
 app.use('/api/client'  , clientRouter)
 app.use('/api/editor'  , editorRouter )

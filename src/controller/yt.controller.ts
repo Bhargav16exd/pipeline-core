@@ -129,6 +129,7 @@ export const upload = async (req:any,res:any,next:any)=>{
 
         
     } catch (error) {
+        //case of error send email
         next(error)
     }
 }
