@@ -32,6 +32,12 @@ export const signup = async (req:any,res:any,next:any) => {
     if(role == "ADMIN"){
          throw new errResponse("Unauthorized Operation",400)
     }
+
+    const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/;
+
+    if(!regex.test(password)){
+        throw new errResponse("Password must be 8-20 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and no spaces.",400)
+    }
  
     const client = await Client.create({
         username,
