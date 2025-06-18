@@ -30,7 +30,8 @@
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
-    "multer": "^2.0.1"
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -39,6 +40,7 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.13",
+    "@types/nodemailer": "^6.4.17",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2"
   }
