@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changePassword, exit, getAllEditors, getEditor, search, signup } from "../controller/editor.controller";
+import { changePassword, exit, getAllEditors, getEditor, search, signup, update } from "../controller/editor.controller";
 import { authMiddleware, isEditor } from "../middleware/auth.middleware";
 import { upload } from "../middleware/multer.middleware";
 
@@ -16,6 +16,6 @@ router.route('/search/:username')  .get(authMiddleware,search)
 
 
 router.route('/changePassword').post(authMiddleware,isEditor,changePassword)
-
+router.route('/update').patch(authMiddleware,isEditor,upload.single('profile'),update)
 
 export default router

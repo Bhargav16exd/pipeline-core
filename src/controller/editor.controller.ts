@@ -178,6 +178,11 @@ export const search = async (req:any,res:any,next:any)=>{
     }
 }
 
+/*
+    Endpoint : /api/editor/changePassword
+    Working  : Search Editor Based on Its Username
+*/
+
 export const changePassword = async (req:any,res:any,next:any) => {
     try {
         
@@ -215,4 +220,45 @@ export const changePassword = async (req:any,res:any,next:any) => {
         console.log(error)
         next(error)
     }
+}
+
+
+/*
+    Endpoint : /api/editor/update
+    Working  : Search Editor Based on Its Username
+*/
+export const update = async (req:any,res:any,next:any) => {
+
+   try {
+    
+    const { name , about , yearsOfExperience, location } = req.body
+    const profilePicture = req.file
+    let url;   
+    
+    if(profilePicture){
+        url = await uploadImageToAwsS3(profilePicture)
+        if(!url){
+            throw new errResponse("Internal Server Error",500)
+        }
+    }
+
+    const editor = await Editor.findOneAndUpdate({
+        _id:req.user._id
+    },{
+        name,
+        about,
+        yearsOfExperience,
+        location,
+        profile:url
+    },{new:true})
+
+    if(!editor){
+        throw new errResponse("Internal Server Error",500)
+    }
+
+    return res.json(new sucResponse(true,200,"Updated Profile Successfully"))
+
+   } catch (error) { 
+      next(error)
+   }
 }
