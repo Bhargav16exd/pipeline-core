@@ -178,3 +178,41 @@ export const search = async (req:any,res:any,next:any)=>{
     }
 }
 
+export const changePassword = async (req:any,res:any,next:any) => {
+    try {
+        
+        const { oldPassword , newPassword } = req.body
+
+        if( !oldPassword || !oldPassword.trim() || !newPassword || !newPassword.trim() ){
+            throw new errResponse("Incomplete Inputs", 400)
+        }
+
+        const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/;
+
+        if(!regex.test(newPassword)){
+            throw new errResponse("Password must be 8-20 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and no spaces.",400)
+        }
+
+        const editor = await Editor.findById(req.user._id).select("+password")
+
+        if(!editor){
+            throw new errResponse("No User Found",400)
+        }
+
+        const isMatch = await editor.isPasswordValid(oldPassword)
+
+        if(!isMatch){
+            throw new errResponse("Incorrect Password",400)
+        }
+
+        editor.password = newPassword
+
+        await editor.save()
+
+        return res.json(new sucResponse(true,201,"Password Change Success"))
+
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+}

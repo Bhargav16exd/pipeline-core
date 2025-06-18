@@ -171,4 +171,47 @@ export const IAM = async(req:any,res:any,next:any)=>{
 }
 
 
+/*
+    Endpoint : /api/client/logout
+    Working  : Change Password 
+*/
 
+
+export const changePassword = async (req:any,res:any,next:any) => {
+    try {
+        
+        const { oldPassword , newPassword } = req.body
+
+        if( !oldPassword || !oldPassword.trim() || !newPassword || !newPassword.trim() ){
+            throw new errResponse("Incomplete Inputs", 400)
+        }
+
+        const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/;
+
+        if(!regex.test(newPassword)){
+            throw new errResponse("Password must be 8-20 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and no spaces.",400)
+        }
+
+        const youtuber = await Client.findById(req.user._id).select("+password")
+
+        if(!youtuber){
+            throw new errResponse("No User Found",400)
+        }
+
+        const isMatch = await youtuber.isPasswordValid(oldPassword)
+
+        if(!isMatch){
+            throw new errResponse("Incorrect Password",400)
+        }
+
+        youtuber.password = newPassword
+        await youtuber.save()
+
+
+        return res.json(new sucResponse(true , 201 , "Password Change Successfully"))
+
+    } catch (error) {
+
+        next(error)
+    }
+}
