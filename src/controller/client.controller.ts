@@ -2,7 +2,7 @@ import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
-import { sendMail } from "../services/email.service"
+import { sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 
@@ -74,7 +74,7 @@ export const signup = async (req:any,res:any,next:any) => {
     }
 
  
-    await sendMail(client)
+    await sendOnBoardEmailYoutuber(client)
 
     await client.save()
     return res.json(new sucResponse(true,200,"Account Created Successfully"))
@@ -134,6 +134,8 @@ export const signin = async(req:any,res:any,next:any)=>{
             isInTeam:client.isInTeam
         }
 
+
+        await signinAlert(client)
 
         return res
         .cookie("token",token,options)
