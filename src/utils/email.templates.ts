@@ -1,3 +1,7 @@
+/*
+  Title : Email Payloads
+  Purpose : Emails Payloads data which is send upon certain events
+*/
 
 export const emailOnboardYoutuber = {
     
@@ -39,7 +43,6 @@ export const emailOnboardEditor = {
 `
 };
 
-
 export const emailSignIn = {
   subject: "Login Alert – You're In!",
   body: `
@@ -54,7 +57,7 @@ export const emailSignIn = {
     `
 };
 
-const emailPasswordChange = {
+export const emailPasswordChange = {
   subject: "Password Changed Successfully",
   body: `
     Hi {{username}},
@@ -71,28 +74,28 @@ const emailPasswordChange = {
 export const emailEditorAddedToTeam = {
   subject: "You’ve Been Added to a New Team!",
   body: `
-Hi {{username}},
+    Hi {{username}},
 
-Great news! You’ve been added to the team **{{teamName}}**.
+    Great news! You’ve been added to the team {{teamName}}.
 
-👥 Collaborate with your YouTuber, upload edited videos, and be part of exciting content creation.
+    👥 Collaborate with your YouTuber, upload edited videos, and be part of exciting content creation.
 
-Let’s make magic happen,  
-The Pipeline Team
+    Let’s make magic happen,  
+    The Pipeline Team
 `
 };
 
 export const emailEditorRemovedFromTeam = {
   subject: "You’ve Been Removed from a Team",
   body: `
-Hi {{username}},
+    Hi {{username}},
 
-You’ve been removed from the team **{{teamName}}**.
+    You’ve been removed from the team {{teamName}}.
 
-You can still join other teams and showcase your editing skills.
+    You can still join other teams and showcase your editing skills.
 
-Keep editing,  
-The Pipeline Team
+    Keep editing,  
+    The Pipeline Team
 `
 };
 
@@ -101,7 +104,7 @@ export const emailEditorAddedForYoutuber = {
   body: `
     Hi {{username}},
 
-    You just added **{{editorName}}** to your team **{{teamName}}**.
+    You just added {{editorName}} to your team.
 
     🎥 What’s Next:
     - Your editor can now start uploading edited videos.
@@ -120,7 +123,7 @@ export const emailEditorRemovedForYoutuber = {
   body: `
     Hi {{username}},
 
-    You’ve successfully removed **{{editorName}}** from your team **{{teamName}}**.
+    You’ve successfully removed {{editorName}} from your team.
 
     🗂 What This Means:
     - The editor no longer has access to your team’s workspace.

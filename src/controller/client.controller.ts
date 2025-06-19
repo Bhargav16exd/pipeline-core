@@ -2,7 +2,7 @@ import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
-import { sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
+import { passwordChangeAlert, sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 
@@ -212,6 +212,8 @@ export const changePassword = async (req:any,res:any,next:any) => {
         youtuber.password = newPassword
         await youtuber.save()
 
+
+        await passwordChangeAlert(youtuber)
 
         return res.json(new sucResponse(true , 201 , "Password Change Successfully"))
 

@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 import dotenv from "dotenv";
-import { emailEditorAddedForYoutuber, emailEditorAddedToTeam, emailEditorRemovedForYoutuber, emailEditorRemovedFromTeam, emailOnboardEditor, emailOnboardYoutuber, emailSignIn } from "../utils/email.templates";
+import { emailEditorAddedForYoutuber, emailEditorAddedToTeam, emailEditorRemovedForYoutuber, emailEditorRemovedFromTeam, emailOnboardEditor, emailOnboardYoutuber, emailPasswordChange, emailSignIn } from "../utils/email.templates";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
     }
 
 })
-
 
 
 //On Boarding Email to Youtuber
@@ -52,49 +51,69 @@ export const signinAlert = async (user:any)=>{
 }
 
 //Editor - Added in team
-export const editorAddedToTeam = async (user:any)=>{
+export const alertEditor_editorAddedToTeam = async (user:any,team:any)=>{
 
     transporter.sendMail({
         from:process.env.SYSTEM_EMAIL,
         to:user.email,
         subject:emailEditorAddedToTeam.subject,
-        text:emailEditorAddedToTeam.body.replace('{{username}}',user.username)
+        text:emailEditorAddedToTeam.body
+            .replace('{{username}}',user.username)
+            .replace('{{teamName}}',team.name)
     })
 
 }
 
 //Editor - Removed from team
-export const editorRemovedFromTeam = async (user:any)=>{
+export const alertEditor_editorRemovedFromTeam = async (user:any,team:any)=>{
 
     transporter.sendMail({
         from:process.env.SYSTEM_EMAIL,
         to:user.email,
         subject:emailEditorRemovedFromTeam.subject,
-        text:emailEditorRemovedFromTeam.body.replace('{{username}}',user.username)
+        text:emailEditorRemovedFromTeam.body
+            .replace('{{username}}',user.username)
+            .replace('{{teamName}}',team.name)
     })
 
 }
 
 //Youtuber - Added in team
-export const youtuberAddedEditorToTeam = async (user:any)=>{
+export const alertYoutuber_AddedEditorToTeam = async (user:any,editor:any)=>{
 
     transporter.sendMail({
         from:process.env.SYSTEM_EMAIL,
         to:user.email,
         subject:emailEditorAddedForYoutuber.subject,
-        text:emailEditorAddedForYoutuber.body.replace('{{username}}',user.username)
+        text:emailEditorAddedForYoutuber.body
+            .replace('{{username}}',user.username)
+            .replace('{{editorName}}',editor.name)
     })
 
 }
 
 //Youtuber - Removed from team
-export const youtuberRemovedEditorFromTeam = async (user:any)=>{
+export const alertYoutuber_RemovedEditorFromTeam = async (user:any,editor:any)=>{
 
     transporter.sendMail({
         from:process.env.SYSTEM_EMAIL,
         to:user.email,
         subject:emailEditorRemovedForYoutuber.subject,
-        text:emailEditorRemovedForYoutuber.body.replace('{{username}}',user.username)
+        text:emailEditorRemovedForYoutuber.body
+            .replace('{{username}}',user.username)
+            .replace('{{editorName}}',editor.name)
+    })
+
+}
+
+//Forget Password Alert
+export const passwordChangeAlert = async (user:any)=>{
+
+    transporter.sendMail({
+        from:process.env.SYSTEM_EMAIL,
+        to:user.email,
+        subject:emailPasswordChange.subject,
+        text:emailPasswordChange.body.replace('{{username}}',user.username)
     })
 
 }

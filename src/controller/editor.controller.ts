@@ -4,6 +4,7 @@ import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 import { Editor } from "../models/editor.model"
 import { uploadImageToAwsS3} from "../services/upload.profile"
+import { passwordChangeAlert } from "../services/email.service"
 
 
 
@@ -214,10 +215,11 @@ export const changePassword = async (req:any,res:any,next:any) => {
 
         await editor.save()
 
+        await passwordChangeAlert(editor)
+
         return res.json(new sucResponse(true,201,"Password Change Success"))
 
     } catch (error) {
-        console.log(error)
         next(error)
     }
 }

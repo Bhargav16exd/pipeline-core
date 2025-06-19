@@ -2,11 +2,9 @@ import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
 import { Team } from "../models/team.model"
 import { Video } from "../models/video.model"
-import { youtuberAddedEditorToTeam } from "../services/email.service"
+import { alertEditor_editorAddedToTeam, alertEditor_editorRemovedFromTeam, alertYoutuber_AddedEditorToTeam, alertYoutuber_RemovedEditorFromTeam} from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
-
-
 
 
 export const info = async (req:any,res:any,next:any)=>{
@@ -94,7 +92,7 @@ export const addEditor = async (req:any , res:any , next:any) => {
         const team : any = await Team.findByIdAndUpdate(
         teamId ,
         {  
-            $addToSet: { editor : editor._id}
+            $addToSet: { editor : editor._id},
         },
         {new:true}) 
  
@@ -103,7 +101,8 @@ export const addEditor = async (req:any , res:any , next:any) => {
             throw new errResponse("Something went wrong",500)
         }
 
-        await youtuberAddedEditorToTeam(req.user)
+        await alertYoutuber_AddedEditorToTeam(req.user,editor)
+        await alertEditor_editorAddedToTeam(editor,team)
 
         return res.json(new sucResponse(true,200,"Editor added success",team))
         
@@ -147,6 +146,9 @@ export const removeEditor = async (req:any ,res:any ,next:any) => {
             if(!team){
                 throw new errResponse("No Team found",400)
             }
+
+            await alertYoutuber_RemovedEditorFromTeam(req.user,editor)
+            await alertEditor_editorRemovedFromTeam(editor,team)
 
             return res.json(new sucResponse(true ,200 , "Editor Removed Success",team))
 
