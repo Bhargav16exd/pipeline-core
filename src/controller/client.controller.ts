@@ -134,9 +134,6 @@ export const signin = async(req:any,res:any,next:any)=>{
             isInTeam:client.isInTeam
         }
 
-
-        await signinAlert(client)
-
         return res
         .cookie("token",token,options)
         .json(new sucResponse(true,200,"Login Success",{token,response}))

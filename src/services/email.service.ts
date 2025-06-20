@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
 
 })
 
-
 //On Boarding Email to Youtuber
 export const sendOnBoardEmailYoutuber = async (user:any)=>{
 

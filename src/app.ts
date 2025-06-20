@@ -42,7 +42,7 @@ export const oauth2Client = new google.auth.OAuth2(
 //Rate Limiter
 const limiter = rateLimit({
   windowMs:1000*60*5,
-  max:100
+  max:1000
 })
 
 app.use(limiter)

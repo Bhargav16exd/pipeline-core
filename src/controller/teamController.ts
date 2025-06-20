@@ -157,3 +157,58 @@ export const removeEditor = async (req:any ,res:any ,next:any) => {
     }
 
 }
+
+/*
+    Endpoint : /api/team/stats/:teamId
+    Working  : Give Stats of Dashboard
+*/
+
+export const stats = async (req:any,res:any,next:any) => {
+
+    try {
+
+     
+        const team = await Team.findById(req.user.teamId)
+
+        if(!team){
+            throw new errResponse("Invalid Team Info",400)
+        }
+
+        const videos = await Video.find({teamId:team._id})
+        
+        let totalVideos 
+        let pendingVideosCount = 0
+        let approvedVideosCount = 0
+
+        if(!videos){
+            totalVideos = 0
+        }else{
+            totalVideos = videos.length
+        }
+
+
+        if( totalVideos > 0 ){
+
+            const pendingVideos = videos.filter((video)=> (video.pending == true && video.approved == true))
+            const approvedVideos = videos.filter((video)=> (video.pending == false && video.approved == true))
+
+            pendingVideosCount = pendingVideos.length > 0 ? pendingVideos.length : 0
+            approvedVideosCount = approvedVideos.length > 0 ? approvedVideos.length : 0
+
+
+        }
+
+        const info = {
+            members : team.editor.length,
+            approve:approvedVideosCount,
+            pending:pendingVideosCount,
+            total:totalVideos
+        }
+
+        return res.json(new sucResponse(true,200,"Stats Fetched Success",info))
+
+
+    } catch (error) {
+        next(error)
+    }
+}

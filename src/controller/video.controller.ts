@@ -158,7 +158,7 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
         })
 
         if(video.length == 0 ){
-            return res.json(new sucResponse(true,200,"No Pending Videos Exist"))
+            return res.json(new sucResponse(true,204,"No Pending Videos Exist"))
         }
 
         
