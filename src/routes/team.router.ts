@@ -12,7 +12,7 @@ router.route('/removeEditor').post(authMiddleware,isYoutuber,removeEditor)
 router.route('/exit').post(authMiddleware,isEditor,exit)
 router.route('/editors/:skip')     .get(authMiddleware,getAllEditors)
 router.route('/editor/:id')  .get(authMiddleware,getEditor)
-router.route('/search/:username')  .get(authMiddleware,search)
+router.route('/search/:name')  .get(authMiddleware,search)
 router.route('/info/:teamId').get(authMiddleware,info)
 
 router.route('/stats').get(authMiddleware,stats)

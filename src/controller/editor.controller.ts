@@ -143,7 +143,7 @@ export const getEditor = async (req:any,res:any,next:any)=>{
 }
 
 /*
-    Endpoint : /api/team/search/:username
+    Endpoint : /api/team/search/:name
     Working  : Search Editor Based on Its Username
 */
 
@@ -151,17 +151,18 @@ export const search = async (req:any,res:any,next:any)=>{
 
     try {
 
-        const {username} = req.params
+        console.log(req.params)
 
-        if(!username || !username.trim()){
+        const {name} = req.params
+
+
+        if(!name || !name.trim()){
             throw new errResponse("Empty Inputs",400)
         }
 
-        console.log(username)
-
         const editors = await Editor.find({
-            username: {
-                $regex: new RegExp(username),
+            name: {
+                $regex: new RegExp(name),
             },
             role:"EDITOR"
         })
