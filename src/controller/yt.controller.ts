@@ -89,18 +89,13 @@ export const upload = async (req:any,res:any,next:any)=>{
         const video = req.session.video
         const YT_META_DATA =  req.session.ytMetaData
 
-
-        console.log(req.session)
    
         if(!client || !video || !YT_META_DATA){
           throw new errResponse("Something is wrong",500)
         }
 
-        const team  = await Team.findOne({
-            editor:{
-                $elemMatch:{$eq:video.uploadedBy}
-            }
-        })
+        const team  = await Team.findById(client.teamId)
+
 
         if(!team){
             throw new errResponse("Something is wrong",500)
