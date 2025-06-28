@@ -12,7 +12,7 @@ import checkEmailVerified from "../middleware/verification.middleware";
 const router = Router();
 
 router.route("/signup").post(checkEmailVerified, signup);
-router.route("/signin").post(checkEmailVerified, signin);
+router.route("/signin").post(signin);
 router.route("/logout").post(authMiddleware, logout);
 router.route("/IAM").get(authMiddleware, IAM);
 
