@@ -9,6 +9,10 @@ import exp from "constants"
 import sucResponse from "../utils/sucResponse"
 import { oauth2Client } from "../app"
 import { google } from "googleapis"
+import dotenv from "dotenv"
+
+
+dotenv.config()
 
 export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
 
@@ -115,7 +119,8 @@ export const upload = async (req:any,res:any,next:any)=>{
             client,
             video,
             token,
-            YT_META_DATA
+            YT_META_DATA,
+            svToken:process.env.SERVER_TO_SERVER_TOKEN
         })
 
         const channelId = await getChannelId(token)
