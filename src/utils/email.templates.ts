@@ -3,8 +3,22 @@
   Purpose : Emails Payloads data which is send upon certain events
 */
 
+export const otpVerificationMail = {
+  subject: "Here is your one time password for Cumin.Cloud",
+  body: `
+        Hi {{username}},
+
+        Here is your one time password for Cumin.Cloud
+
+        {{otp}}
+
+        It will expire in 5 minutes
+
+        Cheers,
+        The Pipeline Team
+        `,
+};
 export const emailOnboardYoutuber = {
-    
   subject: "Welcome to the Creator Dashboard – Let’s Build Your Editing Team!",
   body: `
         Hi {{username}},
@@ -21,7 +35,7 @@ export const emailOnboardYoutuber = {
 
         Ready to roll,
         The Pipeline Team
-        `
+        `,
 };
 
 export const emailOnboardEditor = {
@@ -40,7 +54,7 @@ export const emailOnboardEditor = {
 
     Cheers,  
     The Pipeline Team
-`
+`,
 };
 
 export const emailSignIn = {
@@ -54,7 +68,7 @@ export const emailSignIn = {
 
     Stay creative,  
     The Pipeline Team
-    `
+    `,
 };
 
 export const emailPasswordChange = {
@@ -68,7 +82,7 @@ export const emailPasswordChange = {
 
     Stay secure,  
     The Pipeline Team
-`
+`,
 };
 
 export const emailEditorAddedToTeam = {
@@ -82,7 +96,7 @@ export const emailEditorAddedToTeam = {
 
     Let’s make magic happen,  
     The Pipeline Team
-`
+`,
 };
 
 export const emailEditorRemovedFromTeam = {
@@ -96,7 +110,7 @@ export const emailEditorRemovedFromTeam = {
 
     Keep editing,  
     The Pipeline Team
-`
+`,
 };
 
 export const emailEditorAddedForYoutuber = {
@@ -115,7 +129,7 @@ export const emailEditorAddedForYoutuber = {
 
     Keep creating,  
     The Pipeline Team
-    `
+    `,
 };
 
 export const emailEditorRemovedForYoutuber = {
@@ -134,10 +148,5 @@ export const emailEditorRemovedForYoutuber = {
 
     Stay in control,  
     The Pipeline Team
-    `
+    `,
 };
-
-
-
-
-

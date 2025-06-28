@@ -2,6 +2,7 @@ import express, { NextFunction, Request, urlencoded } from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import dotenv from "dotenv"
+import otpRouter from "./routes/otp.router"
 import clientRouter from "./routes/client.router"
 import teamRouter from "./routes/team.router"
 import videoRouter from "./routes/video.router"
@@ -46,7 +47,7 @@ const limiter = rateLimit({
 })
 
 app.use(limiter)
-
+app.use('/api/otp'     , otpRouter)
 app.use('/api/client'  , clientRouter)
 app.use('/api/editor'  , editorRouter )
 app.use('/api/team'    , teamRouter  )
