@@ -1,11 +1,11 @@
 import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
+import { Otp } from "../models/otp.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
 import { passwordChangeAlert, sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
-
 
 
 /*
@@ -18,7 +18,7 @@ export const signup = async (req:any,res:any,next:any) => {
 
    try {
     
-    const { username , email , password , role } = req.body
+    const { username , email , password , role , otp} = req.body
  
     if(!username || !email || !password || !role){
        throw new errResponse("Kindly Provide all arguments" , 400 )

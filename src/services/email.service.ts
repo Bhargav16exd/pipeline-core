@@ -15,12 +15,14 @@ const transporter = nodemailer.createTransport({
 
 // Mail verification service to user
 export async function sendOtpEmail(user: any, otp: string) {
+
   const mailOptions = {
     from: process.env.MAIL_USER,
     to: user.email,
     subject: otpVerificationMail.subject,
     text: otpVerificationMail.body.replace('{{username}}',user.username).replace('{{otp}}', otp)
   };
+  
   await transporter.sendMail(mailOptions);
 }
 

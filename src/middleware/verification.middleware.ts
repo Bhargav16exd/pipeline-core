@@ -1,28 +1,48 @@
 // import { Request, Response, NextFunction } from "express";
+import { Client } from "../models/client.model";
+import { Editor } from "../models/editor.model";
 import { Otp } from "../models/otp.model";
+import errResponse from "../utils/errResponse";
 
 const checkEmailVerified = async (req: any, res: any, next: any) => {
   try {
-    const { email } = req.body;
+    const { email , otp } = req.body;
 
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
 
-    const user = await Otp.findOne({ email });
+    const user = await Otp.findOne({ email , otp , 
+      expiresAt : {
+        $gt: Date.now()
+      }
+    });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      throw new errResponse("Invalid Inputs",400)
     }
 
     if (user.verified !== true) {
       return res.status(403).json({ message: "Email is not verified." });
     }
 
+    let usr = await Client.findOne({
+      email
+    })
+
+    if(!usr){
+      usr = await Editor.findOne({
+        email,
+      })
+    }
+
+    if(usr){
+      throw new errResponse("User Already Exist",400)
+    }
+
     next();
   } catch (error) {
-    console.error("Email verification middleware error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    next(error)
   }
 };
 

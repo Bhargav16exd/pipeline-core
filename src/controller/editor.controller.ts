@@ -151,10 +151,7 @@ export const search = async (req:any,res:any,next:any)=>{
 
     try {
 
-        console.log(req.params)
-
         const {name} = req.params
-
 
         if(!name || !name.trim()){
             throw new errResponse("Empty Inputs",400)
