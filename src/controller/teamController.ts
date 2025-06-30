@@ -174,7 +174,7 @@ export const stats = async (req:any,res:any,next:any) => {
             throw new errResponse("Invalid Team Info",400)
         }
 
-        const videos = await Video.find({teamId:team._id})
+        const videos = await Video.find({teamId:team._id,cloudUploadStatus:"UPLOADED"})
         
         let totalVideos 
         let pendingVideosCount = 0
