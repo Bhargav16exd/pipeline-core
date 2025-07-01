@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from "express"
 import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
 import { Otp } from "../models/otp.model"
@@ -82,6 +83,26 @@ export const signup = async (req:any,res:any,next:any) => {
    } catch (error) { 
       next(error)
    }
+}
+
+
+
+/*
+    Endpoint : /api/client/code/signup
+    Working  : Creates Account of User
+    Working Class : API Controller
+*/
+export const signupUsingCode = async(req:Request,res:Response,next:NextFunction)=>{
+
+    try {
+        const {email,password,username,role} = req.body
+        
+        console.log(email,password,username,role)
+
+    } catch (error) {
+        
+    }
+
 }
 
 
