@@ -9,7 +9,7 @@ export function generateOtp(): string {
 export async function saveOtp(email: string, otp: string){
 
   //Creates OTP Expiry
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 5 minutes
 
   await Otp.deleteMany({ email });
 
