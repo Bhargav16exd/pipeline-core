@@ -9,6 +9,7 @@ import {
 } from "../controller/client.controller";
 import { authMiddleware, isYoutuber } from "../middleware/auth.middleware";
 import checkEmailVerified from "../middleware/verification.middleware";
+import checkDevCodeVerified from "../middleware/devcode.verification";
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.route("/logout").post(authMiddleware, logout);
 router.route("/IAM").get(authMiddleware, IAM);
 
 //Sign Up Youtuber using developer code
-router.route("/code/signup").post(checkEmailVerified,signupUsingCode)
+router.route("/code/signup").post(checkEmailVerified,checkDevCodeVerified,signupUsingCode)
 router
   .route("/changePassword")
   .post(authMiddleware, isYoutuber, changePassword);
