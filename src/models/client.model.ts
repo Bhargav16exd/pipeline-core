@@ -22,6 +22,7 @@ const clientSchema = new mongoose.Schema({
     },
     email:{
         type:String,
+        unique:true,
         required:true 
     },
     role:{
@@ -39,6 +40,12 @@ const clientSchema = new mongoose.Schema({
     teamId:{
         type:Types.ObjectId,
         ref:"Team"
+    },
+    subscriptionPlan:{
+        type:String,
+        enum:["BASIC","PRO","DEV_CODE"],
+        required:true,
+        default:"BASIC"
     }
 
 },{

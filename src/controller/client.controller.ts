@@ -7,6 +7,7 @@ import { createTeam } from "../services/create.team.service"
 import { passwordChangeAlert, sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
+import { Code } from "../models/dev-code.model"
 
 
 /*
@@ -19,7 +20,7 @@ export const signup = async (req:any,res:any,next:any) => {
 
    try {
     
-    const { username , email , password , role , otp} = req.body
+    const { username , email , password , role , code} = req.body
  
     if(!username || !email || !password || !role){
        throw new errResponse("Kindly Provide all arguments" , 400 )
@@ -95,12 +96,70 @@ export const signup = async (req:any,res:any,next:any) => {
 export const signupUsingCode = async(req:Request,res:Response,next:NextFunction)=>{
 
     try {
-        const {email,password,username,role} = req.body
-        
-        console.log(email,password,username,role)
 
-    } catch (error) {
+      const {email,password,username,role,code} = req.body
+
+      if(!username || !email || !password || !role || !code){
+        throw new errResponse("Kindly Provide all arguments" , 400 )
+      }
+
+      const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/;
+
+      if(!regex.test(password)){
+        throw new errResponse("Password must be 8-20 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and no spaces.",400)
+      }
+  
+      //Create Account of User
+      const client = await Client.create({
+        username,
+        password,
+        email,
+        role,
+        isInTeam:false
+      })
+
+      //Set Code Redeemed as True
+      const codeEntity = await Code.findOneAndUpdate({
+        email,
+        code
+      },{
+        redeemed:true
+      },{new:true})
+
+      if(!codeEntity){
+        throw new errResponse("Internal Server Error",500)
+      }
+
+
+      if(client.role == "YOUTUBER"){
+
+      const team = await createTeam(client)
+
+      if(!team){
+          await Client.deleteOne({_id:client._id})
+          throw new errResponse("Something went wrong",500)
+      }
+
+          client.teamId = team._id 
+          
+          const response = await createFolderGCP(username)
+
+          if(!response){
+              await Client.deleteOne({_id:client._id})
+              throw new errResponse("Something went wrong",500)
+          }
+
+      }
+
+  
+      await sendOnBoardEmailYoutuber(client)
+
+      await client.save()
+      return res.json(new sucResponse(true,200,"Account Created Successfully"))
+          
         
+    } catch (error) {
+        next(error)
     }
 
 }
