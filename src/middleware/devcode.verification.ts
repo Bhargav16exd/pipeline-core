@@ -1,8 +1,9 @@
+import { NextFunction } from "express";
 import { Code } from "../models/dev-code.model";
 import errResponse from "../utils/errResponse";
 
 
-const checkDevCodeVerified = async (req: any, res: any, next: any) => {
+const checkDevCodeVerified = async (req: any, res: any, next:any) => {
 
   try {
 

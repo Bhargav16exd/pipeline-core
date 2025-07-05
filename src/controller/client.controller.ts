@@ -1,13 +1,12 @@
-import { NextFunction, Request, Response } from "express"
 import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
-import { Otp } from "../models/otp.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
 import { passwordChangeAlert, sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 import { Code } from "../models/dev-code.model"
+
 
 
 /*
@@ -93,7 +92,7 @@ export const signup = async (req:any,res:any,next:any) => {
     Working  : Creates Account of User
     Working Class : API Controller
 */
-export const signupUsingCode = async(req:Request,res:Response,next:NextFunction)=>{
+export const signupUsingCode = async(req:any,res:any,next:any)=>{
 
     try {
 
@@ -115,7 +114,8 @@ export const signupUsingCode = async(req:Request,res:Response,next:NextFunction)
         password,
         email,
         role,
-        isInTeam:false
+        isInTeam:false,
+        subscriptionPlan:"DEV_CODE"
       })
 
       //Set Code Redeemed as True
@@ -130,27 +130,25 @@ export const signupUsingCode = async(req:Request,res:Response,next:NextFunction)
         throw new errResponse("Internal Server Error",500)
       }
 
-
       if(client.role == "YOUTUBER"){
 
-      const team = await createTeam(client)
+        const team = await createTeam(client)
 
-      if(!team){
-          await Client.deleteOne({_id:client._id})
-          throw new errResponse("Something went wrong",500)
+        if(!team){
+            await Client.deleteOne({_id:client._id})
+            throw new errResponse("Something went wrong",500)
+        }
+
+        client.teamId = team._id 
+        
+        const response = await createFolderGCP(username)
+
+        if(!response){
+            await Client.deleteOne({_id:client._id})
+            throw new errResponse("Something went wrong",500)
+        }
+
       }
-
-          client.teamId = team._id 
-          
-          const response = await createFolderGCP(username)
-
-          if(!response){
-              await Client.deleteOne({_id:client._id})
-              throw new errResponse("Something went wrong",500)
-          }
-
-      }
-
   
       await sendOnBoardEmailYoutuber(client)
 
@@ -257,8 +255,6 @@ export const IAM = async(req:any,res:any,next:any)=>{
     Endpoint : /api/client/logout
     Working  : Change Password 
 */
-
-
 export const changePassword = async (req:any,res:any,next:any) => {
     try {
         
@@ -299,3 +295,5 @@ export const changePassword = async (req:any,res:any,next:any) => {
         next(error)
     }
 }
+
+

@@ -25,6 +25,11 @@ const teamSchema = new mongoose.Schema({
         type:Number,
         default:0,
         required:true
+    },
+    inviteCode:{
+        type:String,
+        required:true,
+        unique:true
     }
 
 })

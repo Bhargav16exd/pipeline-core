@@ -12,6 +12,7 @@ import { google } from "googleapis"
 import axios from "axios"
 import editorRouter from "./routes/editor.router"
 import rateLimit from "express-rate-limit"
+import adminRouter from "./routes/admin.router"
 
 
 dotenv.config()
@@ -53,6 +54,7 @@ app.use('/api/editor'  , editorRouter )
 app.use('/api/team'    , teamRouter  )
 app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )
+app.use('/api/admin'   , adminRouter )
 
 app.get('/',async (req:any,res:any)=>{
   const response = await axios.get("http://localhost:9998/")
