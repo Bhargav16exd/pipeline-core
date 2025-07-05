@@ -33,18 +33,6 @@ const editorSchema = new mongoose.Schema({
         type:String,
         required:true 
     },
-    about:{
-        type:String,
-        required:true
-    },
-    yearsOfExperience:{
-        type:Number,
-        required:true
-    },
-    location:{
-        type:String,
-        required:true
-    },
     profile:{
         type:String,
         required:true

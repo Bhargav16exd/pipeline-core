@@ -13,7 +13,7 @@ const checkEmailVerified = async (req: any, res: any, next: any) => {
     if (!email || !otp ) {
       throw new errResponse("Invalid Inputs",400)
     }
-
+    
     //Check if the email already belong to a user
     let userExist = await Client.findOne({email});
 

@@ -73,37 +73,22 @@ export const addEditor = async (req:any , res:any , next:any) => {
 
     try {
 
-
+        //Get Inputs
         const {username , teamId} = req.body 
 
-        const editor = await Editor.findOneAndUpdate({username},{
-            isInTeam:true,
-            teamId:teamId
-        },{new:true}).select("+role")
-
-        if(!editor){
-            throw new errResponse("No Such user exists",400)
+        //Check if inputs are empty
+        if(!username || !teamId){
+            throw new errResponse("Invalid Inputs",400)
         }
+      
+        //Call Add Helper Function
+        const {editor,team} = await add(username,teamId)
 
-        if(editor.role != "EDITOR"){
-            throw new errResponse("Invalid Request",400)
-        }
-
-        const team : any = await Team.findByIdAndUpdate(
-        teamId ,
-        {  
-            $addToSet: { editor : editor._id},
-        },
-        {new:true}) 
- 
-
-        if(!team){
-            throw new errResponse("Something went wrong",500)
-        }
-
+        //Notify Youtuber as well as Editor
         await alertYoutuber_AddedEditorToTeam(req.user,editor)
         await alertEditor_editorAddedToTeam(editor,team)
 
+        //Send Response
         return res.json(new sucResponse(true,200,"Editor added success",team))
         
     } catch (error) {
@@ -211,4 +196,44 @@ export const stats = async (req:any,res:any,next:any) => {
     } catch (error) {
         next(error)
     }
+}
+
+//Helper Function Adds User To Team
+
+async function add(username:string,teamId:string){
+
+    const editor = await Editor.findOneAndUpdate({username},{
+        isInTeam:true,
+        teamId:teamId
+    },{new:true}).select("+role")
+
+    if(!editor){
+        throw new errResponse("No Such user exists",400)
+    }
+
+    if(editor.role != "EDITOR"){
+        throw new errResponse("Invalid Request",400)
+    }
+
+    const team : any = await Team.findByIdAndUpdate(
+    teamId ,
+    {  
+        $addToSet: { editor : editor._id},
+    },
+    {new:true}) 
+
+
+    if(!team){
+        throw new errResponse("Something went wrong",500)
+    }
+
+    return {
+        team,
+        editor
+    }
+
+}
+
+export {
+    add
 }

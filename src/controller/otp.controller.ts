@@ -5,10 +5,11 @@ import { generateOtp, saveOtp, verifyOtp } from "../services/otpService";
 import errResponse from "../utils/errResponse";
 import sucResponse from "../utils/sucResponse";
 import { Client } from "../models/client.model";
+import { Editor } from "../models/editor.model";
 
 
 //Send OTP 
-export const sendOtp = async (req: Request, res: Response): Promise<void> => {
+export const sendOtp = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
 
   try {
 
@@ -19,10 +20,14 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
       throw new errResponse("Invalid Inputs",400)
     }
 
-    //Verfiy if user already exist with same email or username
-    const usr = await Client.find({email})
+    //Verfiy if youtuber already exist with same email or username
+    let usr = await Client.findOne({email})
 
-    if(usr.length > 0){
+    if(!usr){
+      usr = await Editor.findOne({email})
+    } 
+
+    if(usr){
       throw new errResponse("Email or Username Already Exist",400)
     }
 
@@ -45,7 +50,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
     res.json(new sucResponse(true,200,"OTP sent"));
 
   } catch (err: any) {
-    res.status(500).json({ message: "Failed to send OTP", error: err.message });
+    next(err)
   }
 };
 

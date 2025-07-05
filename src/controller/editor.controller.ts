@@ -5,17 +5,21 @@ import errResponse from "../utils/errResponse"
 import { Editor } from "../models/editor.model"
 import { uploadImageToAwsS3} from "../services/upload.profile"
 import { passwordChangeAlert } from "../services/email.service"
+import { add } from "./teamController"
 
 
-
+/*
+    Endpoint : TBD
+    Working  : Editor Signup
+*/
 export const signup = async (req:any,res:any,next:any) => {
 
    try {
     
-    const { name , about , yearsOfExperience, location, username , email , password } = req.body
+    const { name , username , email , password } = req.body
     const profilePicture = req.file
  
-    if(!name || !about || !yearsOfExperience || !location || !username || !email || !password || !profilePicture ){
+    if(!name || !username || !email || !password || !profilePicture ){
        throw new errResponse("Kindly Provide all arguments" , 400 )
     }
  
@@ -37,18 +41,18 @@ export const signup = async (req:any,res:any,next:any) => {
         username,
         password,
         email,
-        about,
-        yearsOfExperience,
-        location,
         profile:url,
         isInTeam:false
     })
  
+    await add(editor.username,req.team._id)
+
     await editor.save()
     return res.json(new sucResponse(true,200,"Account Created Successfully"))
 
-   } catch (error) { 
-      next(error)
+   } 
+   catch (error) { 
+     next(error)
    }
 }
 
