@@ -1,4 +1,3 @@
-import { Mongoose } from "mongoose"
 import { Team } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 import crypto from "crypto"

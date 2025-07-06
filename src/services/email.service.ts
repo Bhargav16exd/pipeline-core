@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { emailEditorAddedForYoutuber, emailEditorAddedToTeam, emailEditorRemovedForYoutuber, emailEditorRemovedFromTeam, emailOnboardEditor, emailOnboardYoutuber, emailPasswordChange, emailSignIn, otpVerificationMail } from "../utils/email.templates";
 dotenv.config();
 
+//Mail Transporter
 const transporter = nodemailer.createTransport({
 
     service:"gmail",

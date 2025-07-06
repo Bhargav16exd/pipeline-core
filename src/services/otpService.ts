@@ -20,6 +20,7 @@ export async function saveOtp(email: string, otp: string){
   
 }
 
+//Verifies OTP
 export async function verifyOtp(
   email: string,
   inputOtp: string

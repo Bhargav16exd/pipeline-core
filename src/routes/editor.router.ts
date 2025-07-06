@@ -8,12 +8,17 @@ import checkEmailVerified from "../middleware/verification.middleware";
 
 const router = Router()
 
+/*
+    ROUTE : /api/editor
+    Working : Any Request to above route is redirected here
+*/
 
 router.route('/signup').post(upload.single('profile'),checkEmailVerified,VerifyInviteCode,signup)
 
+//Authorized Routes 
 router.route('/exit').post(authMiddleware,isEditor,exit)
-router.route('/:skip')     .get(authMiddleware,getAllEditors)
-router.route('/:id')  .get(authMiddleware,getEditor)
+router.route('/:skip').get(authMiddleware,getAllEditors)
+router.route('/:id').get(authMiddleware,getEditor)
 
 
 router.route('/changePassword').post(authMiddleware,isEditor,changePassword)

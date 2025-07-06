@@ -2,100 +2,21 @@ import { Client } from "../models/client.model"
 import { Editor } from "../models/editor.model"
 import createFolderGCP from "../services/create.folder.gcp"
 import { createTeam } from "../services/create.team.service"
-import { passwordChangeAlert, sendOnBoardEmailYoutuber, signinAlert } from "../services/email.service"
+import { passwordChangeAlert, sendOnBoardEmailYoutuber } from "../services/email.service"
 import errResponse from "../utils/errResponse"
 import sucResponse from "../utils/sucResponse"
 import { Code } from "../models/dev-code.model"
 
 
-
-/*
-    Endpoint : /api/client/signup
-    Working  : Creates Account of User
-    Working Class : API Controller
-*/
-
-export const signup = async (req:any,res:any,next:any) => {
-
-   try {
-    
-    const { username , email , password , role , code} = req.body
- 
-    if(!username || !email || !password || !role){
-       throw new errResponse("Kindly Provide all arguments" , 400 )
-    }
- 
-    const clientExist = await Client.findOne({username:username})
- 
-    if(clientExist){
-         throw new errResponse("Username already exists",400)
-    }
-
-    if(role == "ADMIN"){
-         throw new errResponse("Unauthorized Operation",400)
-    }
-
-    const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/;
-
-    if(!regex.test(password)){
-        throw new errResponse("Password must be 8-20 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and no spaces.",400)
-    }
- 
-    const client = await Client.create({
-        username,
-        password,
-        email,
-        role,
-        isInTeam:false
-    })
-
-
-    /*
-        If the user is an Youtube Init the Team and Cloud Storage
-    */
-
-    if(client.role == "YOUTUBER"){
-
-       const team = await createTeam(client)
-
-       if(!team){
-        await Client.deleteOne({_id:client._id})
-        throw new errResponse("Something went wrong",500)
-       }
-
-        client.teamId = team._id 
-        
-        const response = await createFolderGCP(username)
-
-        if(!response){
-            await Client.deleteOne({_id:client._id})
-            throw new errResponse("Something went wrong",500)
-        }
-
-    }
-
- 
-    await sendOnBoardEmailYoutuber(client)
-
-    await client.save()
-    return res.json(new sucResponse(true,200,"Account Created Successfully"))
-
-   } catch (error) { 
-      next(error)
-   }
-}
-
-
-
 /*
     Endpoint : /api/client/code/signup
-    Working  : Creates Account of User
-    Working Class : API Controller
+    Working  : Creates Account of Youtuber 
+    Category : API Controller
 */
 export const signupUsingCode = async(req:any,res:any,next:any)=>{
 
     try {
-
+    
       const {email,password,username,role,code} = req.body
 
       if(!username || !email || !password || !role || !code){
@@ -118,7 +39,7 @@ export const signupUsingCode = async(req:any,res:any,next:any)=>{
         subscriptionPlan:"DEV_CODE"
       })
 
-      //Set Code Redeemed as True
+      //Get Code from db and update it  
       const codeEntity = await Code.findOneAndUpdate({
         email,
         code
@@ -130,6 +51,9 @@ export const signupUsingCode = async(req:any,res:any,next:any)=>{
         throw new errResponse("Internal Server Error",500)
       }
 
+    /*
+      Working : If user is youtuber create a team associated with them 
+    */
       if(client.role == "YOUTUBER"){
 
         const team = await createTeam(client)
@@ -150,12 +74,12 @@ export const signupUsingCode = async(req:any,res:any,next:any)=>{
 
       }
   
+      //Notfiy
       await sendOnBoardEmailYoutuber(client)
 
       await client.save()
       return res.json(new sucResponse(true,200,"Account Created Successfully"))
           
-        
     } catch (error) {
         next(error)
     }
@@ -188,7 +112,6 @@ export const signin = async(req:any,res:any,next:any)=>{
             throw new errResponse("User doesnt exist",400)
         }
 
-     
         const isMatch = await client.isPasswordValid(inputPassword)
 
         if(!isMatch){

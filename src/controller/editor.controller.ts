@@ -6,6 +6,7 @@ import { Editor } from "../models/editor.model"
 import { uploadImageToAwsS3} from "../services/upload.profile"
 import { passwordChangeAlert } from "../services/email.service"
 import { add } from "./teamController"
+import { emitWarning } from "process"
 
 
 /*
@@ -88,34 +89,6 @@ export const exit = async (req:any ,res:any ,next:any) => {
 
 }
 
-/*
-    Endpoint : /api/team/editors/:skip
-    Working  : Get All Editors Paginated
-*/
-
-
-export const getAllEditors = async (req:any,res:any,next:any)=>{
-
-   try {
-
-        const {skip} = req.params
-        const limit = 10 
-
-        const editors = await Editor.find({
-            role:"EDITOR"
-        }).limit(limit).skip(skip)
-
-        if(!editors){
-            throw new errResponse("Editors not availabe",400)
-        }
-
-        return res.json(new sucResponse(true,200,"Editors fetched sucesss",editors))
-
-   } catch (error) {
-        next(error)
-   }
-
-}
 
 /*
     Endpoint : /api/team/editor/:id
@@ -235,7 +208,7 @@ export const update = async (req:any,res:any,next:any) => {
 
    try {
     
-    const { name , about , yearsOfExperience, location } = req.body
+    const { name } = req.body
     const profilePicture = req.file
     let url;   
     
@@ -250,9 +223,6 @@ export const update = async (req:any,res:any,next:any) => {
         _id:req.user._id
     },{
         name,
-        about,
-        yearsOfExperience,
-        location,
         profile:url
     },{new:true})
 
