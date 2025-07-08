@@ -13,6 +13,8 @@ export const sendOtp = async (req: Request, res: Response,next:NextFunction): Pr
 
   try {
 
+    console.log(req.body)
+
     //Get User Email Id and Password
     const { email } = req.body;
 
@@ -28,7 +30,7 @@ export const sendOtp = async (req: Request, res: Response,next:NextFunction): Pr
     } 
 
     if(usr){
-      throw new errResponse("Email or Username Already Exist",400)
+      throw new errResponse("Already Registered Email",400)
     }
 
     //Generate OTP
