@@ -174,9 +174,10 @@ export const stats = async (req:any,res:any,next:any) => {
 
         if( totalVideos > 0 ){
 
-            const pendingVideos = videos.filter((video)=> (video.pending == true && video.approved == true))
+            const pendingVideos = videos.filter((video)=> (video.pending == true && video.approved == false))
             const approvedVideos = videos.filter((video)=> (video.pending == false && video.approved == true))
 
+            
             pendingVideosCount = pendingVideos.length > 0 ? pendingVideos.length : 0
             approvedVideosCount = approvedVideos.length > 0 ? approvedVideos.length : 0
 
@@ -189,6 +190,8 @@ export const stats = async (req:any,res:any,next:any) => {
             pending:pendingVideosCount,
             total:totalVideos
         }
+
+        console.log(info)
 
         return res.json(new sucResponse(true,200,"Stats Fetched Success",info))
 
