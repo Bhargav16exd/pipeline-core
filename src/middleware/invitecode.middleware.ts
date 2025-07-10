@@ -8,7 +8,7 @@ async function VerifyInviteCode(req:any,res:any,next:any){
     try {
 
         //Get Invite Code
-        const {inviteCode} = req.body
+        const {code:inviteCode} = req.body
     
         //Check if its null
         if(!inviteCode){
