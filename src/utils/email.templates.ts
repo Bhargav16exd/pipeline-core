@@ -3,6 +3,25 @@
   Purpose : Emails Payloads data which is send upon certain events
 */
 
+export const couponCodeMail = {
+  subject: "Your Signup Coupon Code for Cumin.Cloud",
+  body: `
+    Hi {{username}},
+
+    We're excited to have you on board at Cumin.Cloud!
+
+    Use the coupon code below to sign up and unlock exclusive features:
+
+    🎁 Coupon Code: {{couponCode}}
+
+    This code is valid for 7 days. Don’t miss out!
+
+    Cheers,  
+    The Cumin.Cloud Team
+  `,
+};
+
+
 export const otpVerificationMail = {
   subject: "Here is your one time password for Cumin.Cloud",
   body: `

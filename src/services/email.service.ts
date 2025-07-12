@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 import dotenv from "dotenv";
-import { emailEditorAddedForYoutuber, emailEditorAddedToTeam, emailEditorRemovedForYoutuber, emailEditorRemovedFromTeam, emailOnboardEditor, emailOnboardYoutuber, emailPasswordChange, emailSignIn, otpVerificationMail } from "../utils/email.templates";
+import { couponCodeMail, emailEditorAddedForYoutuber, emailEditorAddedToTeam, emailEditorRemovedForYoutuber, emailEditorRemovedFromTeam, emailOnboardEditor, emailOnboardYoutuber, emailPasswordChange, emailSignIn, otpVerificationMail } from "../utils/email.templates";
 dotenv.config();
 
 //Mail Transporter
@@ -13,6 +13,19 @@ const transporter = nodemailer.createTransport({
     }
 
 })
+
+export async function sendCouponEmail(email: string, couponCode: string) {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: couponCodeMail.subject,
+    text: couponCodeMail.body
+      .replace('{{username}}', email)
+      .replace('{{couponCode}}', couponCode),
+  };
+
+  await transporter.sendMail(mailOptions);
+}
 
 // Mail verification service to user
 export async function sendOtpEmail(email: any, otp: string) {
