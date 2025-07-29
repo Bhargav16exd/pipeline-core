@@ -15,6 +15,7 @@ import videoRouter from "./routes/video.router"
 import ytRouter from "./routes/yt.router"
 import editorRouter from "./routes/editor.router"
 import adminRouter from "./routes/admin.router"
+import { initQueues } from "./services/init.queues"
 
 
 dotenv.config()
@@ -34,8 +35,6 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
-
-
 
 export const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -60,6 +59,8 @@ app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )
 app.use('/api/admin'   , adminRouter )
 
+//Initialize Queue
+initQueues()
 
 // Error Handler
 app.use((err:any,req:Request ,res: any ,next:NextFunction)=>{

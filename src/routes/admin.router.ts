@@ -8,6 +8,6 @@ const router = Router()
     ROUTE : /api/admin
     Working : Any Request to above route is redirected here
 */
-router.route('/generate-code').post(authMiddleware,generateDevCouponCode)
+router.route('/generate-code').post(generateDevCouponCode)
 
 export default router;
