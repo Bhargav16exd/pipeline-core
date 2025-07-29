@@ -59,9 +59,6 @@ app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )
 app.use('/api/admin'   , adminRouter )
 
-//Initialize Queue
-initQueues()
-
 // Error Handler
 app.use((err:any,req:Request ,res: any ,next:NextFunction)=>{
 
