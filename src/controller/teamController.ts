@@ -191,7 +191,6 @@ export const stats = async (req:any,res:any,next:any) => {
             total:totalVideos
         }
 
-        console.log(info)
 
         return res.json(new sucResponse(true,200,"Stats Fetched Success",info))
 

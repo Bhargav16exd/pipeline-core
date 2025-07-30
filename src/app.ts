@@ -15,7 +15,7 @@ import videoRouter from "./routes/video.router"
 import ytRouter from "./routes/yt.router"
 import editorRouter from "./routes/editor.router"
 import adminRouter from "./routes/admin.router"
-import { initQueues } from "./services/init.queues"
+import { uploadQueue } from "./services/init.queues"
 
 
 dotenv.config()
@@ -58,6 +58,8 @@ app.use('/api/team'    , teamRouter  )
 app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )
 app.use('/api/admin'   , adminRouter )
+
+
 
 // Error Handler
 app.use((err:any,req:Request ,res: any ,next:NextFunction)=>{

@@ -1,21 +1,32 @@
 import { Queue } from "bullmq"
 import IORedis from 'ioredis';
 
+let uploadQueue : Queue ;
+
 async function initQueues(){
 
-    const myQueue = new Queue('myqueue');
-    const connection = new IORedis();
+    uploadQueue = new Queue('yt-upload-queue');
     
+    //Set Global Concurrecny
+    await uploadQueue.setGlobalConcurrency(3)
+
+    const connection = new IORedis();
+ 
     connection.on("ready",()=>{
-        console.log("Bull MQ attached Redis : SUCCESS ")
+        console.log("[ Bull MQ & Redis Connection ] : SUCCESS ")
+        console.log("[ QUEUE CREATED ]",uploadQueue.name)
     })
 
     connection.on("error",(error)=>{
-        console.log("Bull MQ attached Redis : FAILED ",error)
+        console.log("[ Bull MQ & Redis Connection ] : FAILED ", error )
     })
+
+    console.log(await uploadQueue.getJobCounts())
 }
 
 
+export default initQueues
+
 export {
-    initQueues
+    uploadQueue
 }

@@ -10,6 +10,7 @@ import sucResponse from "../utils/sucResponse"
 import { oauth2Client } from "../app"
 import { google } from "googleapis"
 import dotenv from "dotenv"
+import { uploadQueue } from "../services/init.queues"
 
 
 dotenv.config()
@@ -114,7 +115,16 @@ export const upload = async (req:any,res:any,next:any)=>{
 
 
         // download the video and upload it on youtube
-        axios.post("http://localhost:9998/upload",{
+        // axios.post("http://localhost:9998/upload",{
+        //     team,
+        //     client,
+        //     video,
+        //     token,
+        //     YT_META_DATA,
+        //     svToken:process.env.SERVER_TO_SERVER_TOKEN
+        // })
+
+        await uploadQueue.add('video',{
             team,
             client,
             video,
@@ -123,6 +133,8 @@ export const upload = async (req:any,res:any,next:any)=>{
             svToken:process.env.SERVER_TO_SERVER_TOKEN
         })
 
+        console.log(await uploadQueue.getJobCounts())
+        
         const channelId = await getChannelId(token)
 
         return res.redirect(`https://studio.youtube.com/channel/${channelId}/videos/`) 

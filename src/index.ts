@@ -2,7 +2,7 @@ import app from "./app"
 import { connectToDatabase } from "./db/db"
 import dotenv from "dotenv"
 import { listenToGCP } from "./services/pubsub"
-import { initQueues } from "./services/init.queues"
+import  initQueues  from "./services/init.queues"
 
 
 dotenv.config()
@@ -17,6 +17,8 @@ connectToDatabase()
 
     //Initialize Queue
     initQueues()
+
+    
     
     // listenToGCP()
 })

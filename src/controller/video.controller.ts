@@ -128,8 +128,6 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
 
         const user = req.user 
         let team : any  = null
-
-        console.log(user)
     
         if(user.role == "YOUTUBER"){
             team = await Team.findById(user.teamId)
