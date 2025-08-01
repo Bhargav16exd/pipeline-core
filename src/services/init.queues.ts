@@ -23,7 +23,7 @@ async function initQueues(){
     })
 
 
-    setTimeout(async ()=>{
+    setInterval(async ()=>{
         console.log(await uploadQueue.getJobCounts())
     },10000)
 
