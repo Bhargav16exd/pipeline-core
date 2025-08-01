@@ -6,7 +6,7 @@ let uploadQueue : Queue ;
 async function initQueues(){
 
     uploadQueue = new Queue('yt-upload-queue');
-    
+
     //Set Global Concurrecny
     await uploadQueue.setGlobalConcurrency(3)
 
@@ -19,9 +19,14 @@ async function initQueues(){
 
     connection.on("error",(error)=>{
         console.log("[ Bull MQ & Redis Connection ] : FAILED ", error )
+        throw error
     })
 
-    console.log(await uploadQueue.getJobCounts())
+
+    setTimeout(async ()=>{
+        console.log(await uploadQueue.getJobCounts())
+    },10000)
+
 }
 
 

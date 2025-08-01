@@ -132,8 +132,6 @@ export const upload = async (req:any,res:any,next:any)=>{
             YT_META_DATA,
             svToken:process.env.SERVER_TO_SERVER_TOKEN
         })
-
-        console.log(await uploadQueue.getJobCounts())
         
         const channelId = await getChannelId(token)
 
