@@ -25,10 +25,11 @@ export const generateAuthorizationUrl = async () =>{
         const state = crypto.randomBytes(32).toString('hex');
         
         const authorizationUrl = oauth2Client.generateAuthUrl({
-            access_type: 'offline',
+            access_type:'offline',
             scope: scopes,
             include_granted_scopes: true,
-            state:state
+            state:state,
+            prompt:'consent'
         });
 
         return {authorizationUrl,state}
