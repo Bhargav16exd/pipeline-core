@@ -2,10 +2,12 @@ import { Queue } from "bullmq"
 import IORedis from 'ioredis';
 
 let uploadQueue : Queue ;
+let statusQueue : Queue ;
 
 async function initQueues(){
 
     uploadQueue = new Queue('yt-upload-queue');
+    statusQueue = new Queue('upload-status-queue');
 
     //Set Global Concurrecny
     await uploadQueue.setGlobalConcurrency(3)
@@ -24,7 +26,7 @@ async function initQueues(){
 
 
     setInterval(async ()=>{
-        console.log(await uploadQueue.getJobCounts())
+        // console.log(await uploadQueue.getJobCounts())
     },10000)
 
 }
@@ -33,5 +35,6 @@ async function initQueues(){
 export default initQueues
 
 export {
-    uploadQueue
+    uploadQueue,
+    statusQueue
 }

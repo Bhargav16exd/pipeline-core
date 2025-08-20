@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getApprovedVideos, getPendingVideos, initateUpload, updateUploadStatus } from "../controller/video.controller";
+import {  getInitiatedVideos, getPendingVideos, initateUpload, updateUploadStatus } from "../controller/video.controller";
 import { authMiddleware, isEditor } from "../middleware/auth.middleware";
 
 
@@ -15,7 +15,7 @@ router.route('/upload') .post(authMiddleware,isEditor,initateUpload)
 
 //Allow all authorized uses
 router.route('/pending' ) .get(authMiddleware,getPendingVideos       )
-router.route('/approved') .get(authMiddleware,getApprovedVideos      )
+router.route('/init') .get(authMiddleware,getInitiatedVideos      )
 
 router.route('/status').post(updateUploadStatus)
 

@@ -1,16 +1,16 @@
-import axios from "axios"
 import { Team } from "../models/team.model"
 import { Video } from "../models/video.model"
 import { generateAuthorizationUrl} from "../services/auth"
 import { getGoogleAuthToken } from "../services/auth.token"
 import errResponse from "../utils/errResponse"
 import { YtMetaData } from "../models/ytMetaData.model"
-import exp from "constants"
 import sucResponse from "../utils/sucResponse"
 import { oauth2Client } from "../app"
 import { google } from "googleapis"
 import dotenv from "dotenv"
-import { uploadQueue } from "../services/init.queues"
+import { statusQueue, uploadQueue } from "../services/init.queues"
+import { createVideoStatus, DONE, INPROGRESS, PENDING } from "../utils/upload.status.template"
+import { UploadLogs } from "../models/upload.logs"
 
 
 dotenv.config()
@@ -33,7 +33,9 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         }
 
         //Fetch Data Regarding Video 
-        const video = await Video.findOne({_id:videoId , cloudUploadStatus:"UPLOADED"})
+        const video = await Video.findOneAndUpdate({_id:videoId , cloudUploadStatus:"UPLOADED"},{
+            initiated:true
+        })
 
         if(!video){
             throw new errResponse("Invalid Video Id",400)
@@ -77,6 +79,24 @@ export const uploadVideoOnYoutube = async (req:any,res:any,next:any) => {
         req.session.video = video 
         req.session.ytMetaData = YT_META_DATA
 
+
+        let uploadLog;
+
+        uploadLog = await UploadLogs.findOne({videoId:video._id})
+
+        if(!uploadLog){
+            //Create Log Entry
+            uploadLog = await UploadLogs.create({
+                videoId:video._id,
+                permissionGranted:"INPROGRESS"
+            })
+
+            await uploadLog.save()
+        }
+
+        //Add Item to Queue Auth Init and Id
+        await statusQueue.add('status', createVideoStatus(video._id, DONE , INPROGRESS , PENDING , PENDING , PENDING))
+
         //Redirect
         return res.json(new sucResponse(true,200,"Video Upload Initiated",authorizationUrl))
 
@@ -113,16 +133,8 @@ export const upload = async (req:any,res:any,next:any)=>{
             throw new errResponse("Unauthorized",400)
         }
 
-
-        // download the video and upload it on youtube
-        // axios.post("http://localhost:9998/upload",{
-        //     team,
-        //     client,
-        //     video,
-        //     token,
-        //     YT_META_DATA,
-        //     svToken:process.env.SERVER_TO_SERVER_TOKEN
-        // })
+        //Add Item to Queue Permission Granted and in Queue
+        await statusQueue.add('status', createVideoStatus(video._id, DONE , DONE , INPROGRESS , PENDING , PENDING))
 
         await uploadQueue.add('video',{
             team,

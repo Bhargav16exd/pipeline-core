@@ -15,13 +15,26 @@ import videoRouter from "./routes/video.router"
 import ytRouter from "./routes/yt.router"
 import editorRouter from "./routes/editor.router"
 import adminRouter from "./routes/admin.router"
-import { uploadQueue } from "./services/init.queues"
+import { createServer } from "http"
+import { Server } from "socket.io"
+import { latest } from "./socket/socket"
+
 
 
 dotenv.config()
 
 
 const app = express()
+
+const socketApp = createServer(app)
+const io = new Server(socketApp,{
+  cors:{
+    origin:process.env.ORIGIN_URL,
+    credentials:true
+  }
+})
+
+
 
 app.use(cookieParser())
 app.use(urlencoded({extended:true}))
@@ -59,6 +72,8 @@ app.use('/api/video'   , videoRouter )
 app.use('/api/yt'      , ytRouter    )
 app.use('/api/admin'   , adminRouter )
 
+app.get('/logs/:id',latest)
+
 
 
 // Error Handler
@@ -76,5 +91,9 @@ app.use((err:any,req:Request ,res: any ,next:NextFunction)=>{
   
 })
 
+export {
+  io,
+  socketApp
+}
 
 export default app 

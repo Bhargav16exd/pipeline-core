@@ -13,8 +13,6 @@ export const sendOtp = async (req: Request, res: Response,next:NextFunction): Pr
 
   try {
 
-    console.log(req.body)
-
     //Get User Email Id and Password
     const { email } = req.body;
 

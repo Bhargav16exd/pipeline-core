@@ -44,6 +44,10 @@ const videoSchema = new mongoose.Schema({
     pending:{
         type:Boolean,
         default:true
+    },
+    initiated:{
+        type:Boolean,
+        default:false
     }
 
 },

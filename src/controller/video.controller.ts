@@ -184,46 +184,33 @@ export const getPendingVideos = async (req:any,res:any,next:any) => {
 }
 
 /* 
-    Endpoint : /api/video/approved
+    Endpoint : /api/video/init
     Working  :  Gets all Approved Videos
 */
 
-export const getApprovedVideos = async (req:any,res:any,next:any) => {
+export const getInitiatedVideos = async (req:any,res:any,next:any) => {
 
     try {
+
         const user = req.user 
-        let team  = null
-    
-        if(user.role == "YOUTUBER"){
-            team = await Team.findOne({
-                youtuber:user._id
-            })
-        }
-        else if(user.role=="EDITOR"){
-            team = await Team.findOne({
-                editor:{
-                    $elemMatch :{ $eq:user._id}
-                }
-            
-            })
-        }
-    
-        if(!team){
-            throw new errResponse("No Team Exist",400)
-        }
     
         const video = await Video.find({
-            teamId:team._id,
-            pending:false,
-            approved:true
+            teamId:user.teamId,
+            initiated:true,
+            pending:true,
+            approved:false
+        }).populate({
+            path:'uploadedBy',
+            select: 'name'
         })
-    
+
         if(video.length == 0 ){
-            return res.json(new sucResponse(true,200,"No Approved Videos Exist"))
+            return res.json(new sucResponse(true,200,"No Youtube Upload Initiated Yet"))
         }
         else if(video.length > 0){
-            return res.json(new sucResponse(true,200,"Approved Videos ",video))
+            return res.json(new sucResponse(true,200,"Youtube Upload Initiated Video Fetched",video))
         }
+
     } catch (error) {
         next(error)   
     }
