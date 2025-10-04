@@ -1,9 +1,9 @@
-import mongoose , {Types} from "mongoose";
+import mongoose , {Document, Types} from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 
-interface IUser extends Document {
+export interface EditorType extends Document {
     name:string,
     username: string;
     email: string;
@@ -103,4 +103,4 @@ editorSchema.methods.generateToken = async function () {
 }
 
 
-export const Editor = mongoose.model<IUser>("Editor",editorSchema)
+export const Editor = mongoose.model<EditorType>("Editor",editorSchema)

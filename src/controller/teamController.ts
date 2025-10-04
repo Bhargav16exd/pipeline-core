@@ -1,6 +1,7 @@
+import { ObjectId } from "mongoose"
 import { Client } from "../models/client.model"
-import { Editor } from "../models/editor.model"
-import { Team } from "../models/team.model"
+import { Editor, EditorType } from "../models/editor.model"
+import { Team, TeamType } from "../models/team.model"
 import { Video } from "../models/video.model"
 import { alertEditor_editorAddedToTeam, alertEditor_editorRemovedFromTeam, alertYoutuber_AddedEditorToTeam, alertYoutuber_RemovedEditorFromTeam} from "../services/email.service"
 import errResponse from "../utils/errResponse"
@@ -69,7 +70,6 @@ export const info = async (req:any,res:any,next:any)=>{
 */
 
 export const addEditor = async (req:any , res:any , next:any) => {
-
 
     try {
 
@@ -202,7 +202,9 @@ export const stats = async (req:any,res:any,next:any) => {
 
 //Helper Function Adds User To Team
 
-async function add(username:string,teamId:string){
+type addFunctionReturnValue = TeamType & EditorType
+
+async function add(username:string,teamId:any){
 
     const editor = await Editor.findOneAndUpdate({username},{
         isInTeam:true,
@@ -217,7 +219,7 @@ async function add(username:string,teamId:string){
         throw new errResponse("Invalid Request",400)
     }
 
-    const team : any = await Team.findByIdAndUpdate(
+    const team = await Team.findByIdAndUpdate(
     teamId ,
     {  
         $addToSet: { editor : editor._id},

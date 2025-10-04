@@ -6,16 +6,17 @@ import { Editor } from "../models/editor.model"
 import { uploadImageToAwsS3} from "../services/upload.profile"
 import { passwordChangeAlert } from "../services/email.service"
 import { add } from "./teamController"
-import { emitWarning } from "process"
+import { NextFunction, Request, Response } from "express"
 
 
 /*
     Endpoint : TBD
     Working  : Editor Signup
 */
-export const signup = async (req:any,res:any,next:any) => {
-
+export const signup = async (req:Request,res:Response,next:NextFunction) => {
    try {
+
+    if(!req.team) throw new errResponse("Invalid Requeset",500)
     
     const { name , username , email , password } = req.body
     const profilePicture = req.file
@@ -49,7 +50,7 @@ export const signup = async (req:any,res:any,next:any) => {
     await add(editor.username,req.team._id)
 
     await editor.save()
-    return res.json(new sucResponse(true,200,"Account Created Successfully"))
+    res.json(new sucResponse(true,200,"Account Created Successfully"))
 
    } 
    catch (error) { 
@@ -62,29 +63,32 @@ export const signup = async (req:any,res:any,next:any) => {
     Working  : Editor Can Exit the Team
 */
 
-export const exit = async (req:any ,res:any ,next:any) => {
+export const exit = async (req:Request ,res:Response ,next:NextFunction) => {
+
+    if(!req.user)throw new errResponse("Invalid Request",400)
+
     try {
-        
-            const {teamId} = req.body 
 
-            const { _id : editorId} = req.user
-        
-            const team = await Team.findByIdAndUpdate(
-                teamId,
-                {
-                    $pull : {editor:editorId}
-                },
-                {new:true}
-            )
-        
-            if(!team){
-                throw new errResponse("No Team found",400)
-            }
+        const {teamId} = req.body 
 
-            return res.json(new sucResponse(true ,200 , "Team Exit Success",team))
+        const { _id : editorId} = req?.user
+    
+        const team = await Team.findByIdAndUpdate(
+            teamId,
+            {
+                $pull : {editor:editorId}
+            },
+            {new:true}
+        )
+    
+        if(!team){
+            throw new errResponse("No Team found",400)
+        }
+
+        res.json(new sucResponse(true ,200 , "Team Exit Success",team))
 
     } catch (error) {
-            next(error)
+        next(error)
     }
 
 }
@@ -96,7 +100,7 @@ export const exit = async (req:any ,res:any ,next:any) => {
 */
 
 // Get Editor Profile
-export const getEditor = async (req:any,res:any,next:any)=>{
+export const getEditor = async (req:Request,res:Response,next:NextFunction)=>{
 
     try {
         const {id:editorId} = req.params
@@ -111,47 +115,12 @@ export const getEditor = async (req:any,res:any,next:any)=>{
             throw new errResponse("No editor exist",400)
         }
     
-        return res.json(new sucResponse(true,200,"Editor fetched sucess",editor))
+        res.json(new sucResponse(true,200,"Editor fetched sucess",editor))
 
     } catch (error) {
         next(error)
     }
 
-}
-
-/*
-    Endpoint : /api/team/search/:name
-    Working  : Search Editor Based on Its Username
-*/
-
-export const search = async (req:any,res:any,next:any)=>{
-
-    try {
-
-        const {name} = req.params
-
-        if(!name || !name.trim()){
-            throw new errResponse("Empty Inputs",400)
-        }
-
-        const editors = await Editor.find({
-            name: {
-                $regex: new RegExp(name),
-            },
-            role:"EDITOR"
-        })
-
-
-        if(editors.length == 0 ){
-            return res.json(new sucResponse(true,204,"No Editors Found"))
-        }
-
-        return res.json(new sucResponse(true,200,"Editors Fetched Success",editors))
-
-
-    } catch (error) {
-        next(error)
-    }
 }
 
 /*
@@ -159,7 +128,12 @@ export const search = async (req:any,res:any,next:any)=>{
     Working  : Search Editor Based on Its Username
 */
 
-export const changePassword = async (req:any,res:any,next:any) => {
+export const changePassword = async (req:Request,res:Response,next:NextFunction) => {
+
+    if(!req.user){
+        throw new errResponse("Invalid Request",500)
+    }
+
     try {
         
         const { oldPassword , newPassword } = req.body
@@ -192,7 +166,7 @@ export const changePassword = async (req:any,res:any,next:any) => {
 
         await passwordChangeAlert(editor)
 
-        return res.json(new sucResponse(true,201,"Password Change Success"))
+        res.json(new sucResponse(true,201,"Password Change Success"))
 
     } catch (error) {
         next(error)
@@ -202,11 +176,15 @@ export const changePassword = async (req:any,res:any,next:any) => {
 
 /*
     Endpoint : /api/editor/update
-    Working  : Search Editor Based on Its Username
+    Working  : Update Editor
 */
-export const update = async (req:any,res:any,next:any) => {
+export const update = async (req:Request,res:Response,next:NextFunction) => {
 
    try {
+
+    if(!req.user){
+        throw new errResponse("Invalid Request",400)
+    }
     
     const { name } = req.body
     const profilePicture = req.file
@@ -230,7 +208,7 @@ export const update = async (req:any,res:any,next:any) => {
         throw new errResponse("Internal Server Error",500)
     }
 
-    return res.json(new sucResponse(true,200,"Updated Profile Successfully"))
+    res.json(new sucResponse(true,200,"Updated Profile Successfully"))
 
    } catch (error) { 
       next(error)

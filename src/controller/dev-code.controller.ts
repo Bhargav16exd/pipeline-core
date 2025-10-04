@@ -60,8 +60,7 @@ export const generateDevCouponCode = async (req:Request,res:Response,next:NextFu
 
 }
 
-function createCouponCode(input:string){
-
+function createCouponCode(input:string):string{
     const payload = `${input}+/${process.env.SALT}+/${process.env.COUPON_SECRET}`
     const hash = crypto.createHash("sha256")
     const code = hash.update(payload).digest('hex')

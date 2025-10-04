@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 })
 
-export async function sendCouponEmail(email: string, couponCode: string) {
+export async function sendCouponEmail(email: string, couponCode: string):Promise<void>{
   const mailOptions = {
     from: process.env.MAIL_USER,
     to: email,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changePassword, exit, getEditor, search, signup, update } from "../controller/editor.controller";
+import { changePassword, exit, getEditor, signup, update } from "../controller/editor.controller";
 import { authMiddleware, isEditor } from "../middleware/auth.middleware";
 import { upload } from "../middleware/multer.middleware";
 import { VerifyInviteCode } from "../middleware/invitecode.middleware";

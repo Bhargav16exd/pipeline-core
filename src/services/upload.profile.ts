@@ -10,7 +10,7 @@ const s3 :any = new S3Client ({
 })
 
 
-export const uploadImageToAwsS3 = async (file:any)=>{
+export const uploadImageToAwsS3 = async (file:Express.Multer.File):Promise<string>=>{
     try {
 
         const fileContent = fs.readFileSync(`${file.destination}/${file.originalname}`)
@@ -32,6 +32,6 @@ export const uploadImageToAwsS3 = async (file:any)=>{
           return url
         
     } catch (error) {
-        console.log(error)
+        throw(error)
     }
 }

@@ -1,9 +1,17 @@
-import mongoose, {Types} from "mongoose";
+import mongoose, {Document, ObjectId, Types} from "mongoose";
 
 /*
     Title : Defines Mongoose Schema for Team
     Need  : Used to Define Data of Team 
 */
+
+export interface TeamType extends Document {
+    name:string;
+    editor:Types.ObjectId[],
+    approvedVideos:number;
+    pendingVideos:number;
+    inviteCode:string
+}
 
 
 const teamSchema = new mongoose.Schema({
@@ -34,4 +42,4 @@ const teamSchema = new mongoose.Schema({
 
 })
 
-export const Team = mongoose.model("Team",teamSchema)
+export const Team = mongoose.model<TeamType>("Team",teamSchema)

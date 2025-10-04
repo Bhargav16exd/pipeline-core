@@ -1,5 +1,5 @@
 //Package Imports
-import express, { NextFunction, Request, urlencoded } from "express"
+import express, { NextFunction, Request, Response, urlencoded } from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import dotenv from "dotenv"
@@ -19,10 +19,7 @@ import { createServer } from "http"
 import { Server } from "socket.io"
 import { latest } from "./socket/socket"
 
-
-
 dotenv.config()
-
 
 const app = express()
 
@@ -33,8 +30,6 @@ const io = new Server(socketApp,{
     credentials:true
   }
 })
-
-
 
 app.use(cookieParser())
 app.use(urlencoded({extended:true}))
@@ -77,13 +72,13 @@ app.get('/logs/:id',latest)
 
 
 // Error Handler
-app.use((err:any,req:Request ,res: any ,next:NextFunction)=>{
+app.use((err:any,_:Request,res: Response)=>{
 
   const statusCode = err.statusCode || 500 
   const message    = err.message    || "Something went wrong"
   const error      = err            
 
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     statusCode,
     message,
     error

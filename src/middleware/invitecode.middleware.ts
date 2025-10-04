@@ -1,9 +1,10 @@
-import { Team } from "../models/team.model"
+import { NextFunction, Request, Response } from "express"
+import { Team, TeamType } from "../models/team.model"
 import errResponse from "../utils/errResponse"
 
 
 
-async function VerifyInviteCode(req:any,res:any,next:any){
+async function VerifyInviteCode(req:Request,res:Response,next:NextFunction){
 
     try {
 

@@ -2,39 +2,42 @@ import { NextFunction, Request, Response } from "express"
 import { io } from "../app"
 import jwt from "jsonwebtoken"
 import errResponse from "../utils/errResponse"
-import { Client } from "../models/client.model"
+import { Client, YoutuberType } from "../models/client.model"
 import dotenv from "dotenv"
 import { UploadLogs } from "../models/upload.logs"
 import sucResponse from "../utils/sucResponse"
+import { Socket } from "socket.io"
 
 dotenv.config()
 
-const JWT_SECRET : any = process.env.JWT_SECRET
+const JWT_SECRET:string= process.env.JWT_SECRET ?? ""
 
-let socket : any ;
+interface SocketExtended extends Socket {
+    user?:YoutuberType
+}
+
+let socket:SocketExtended ;
 
 export default async function ListenToSocket(){
 
-    io.use(async(socket,next)=>{
+    io.use(async(socket:SocketExtended,next)=>{
 
         try {
 
             const token = socket.handshake.auth.token 
 
-            const validatedUser : any = jwt.verify(token,JWT_SECRET)
-
+            const validatedUser:any = jwt.verify(token,JWT_SECRET)
                     
             if(!validatedUser){
                 throw new errResponse("Unauthenticated",400)
             }
             
-            const user : any = await Client.findById(validatedUser._id)
+            const user = await Client.findById(validatedUser._id)
             
             if(!user){
                throw new errResponse("Internal Server Error",500)
             }
             
-            //@ts-ignore
             socket.user = user 
             next()
 
@@ -45,11 +48,9 @@ export default async function ListenToSocket(){
 
     
     io.on("connection", async (socket) => {
-
-        const someId : any = socket.handshake.query.id
-
+        const someId  = socket.handshake.query.id
+        if(!someId) return
         socket.join(someId)
-
     })
 
 }

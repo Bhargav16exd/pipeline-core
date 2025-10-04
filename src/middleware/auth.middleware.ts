@@ -1,49 +1,56 @@
 import jwt from "jsonwebtoken"
-import { Client } from "../models/client.model"
+import { Client, YoutuberType} from "../models/client.model"
 import errResponse from "../utils/errResponse"
-import { Editor } from "../models/editor.model"
+import { Editor, EditorType } from "../models/editor.model"
+import { NextFunction, Request } from "express"
 
-export const authMiddleware = async (req:any,res:any,next:any)=>{
+export type UserType = YoutuberType | EditorType
 
-    try {
+export const authMiddleware = async (req:Request,_:any,next:NextFunction)=>{
 
-          let token
-          token  = req.cookies.token
-          const JWT_SECRET = process.env.JWT_SECRET as any 
+  try {
 
-          if(!token){
-            token = req.header("Authorization").split(" ")[1]
-          }
+    let token
+    token  = req.cookies.token
+    const JWT_SECRET = process.env.JWT_SECRET as any 
 
-      //  const token = req.header("Authorization").split[" "] req.header("Authorization") gives single header req.headers give all headers 
-
-          if(!token){
-            throw new errResponse("Unauthenticated",400)
-          }
-
-          const {_id} : any = jwt.verify(token,JWT_SECRET)
-
-          if(!_id){
-            throw new errResponse("Unauthenticated",400)
-          }
-
-          let client: any = await Client.findById(_id).select("+role")
-
-          if(!client){
-            client = await Editor.findById(_id).select("+role")
-          }
-
-          if(!client){
-            throw new errResponse("User not found",400)
-          }
-
-          req.user = client
-          next()
-        
-    } catch (error) {
-
-        next(error)
+    if(!token){
+      const authHeader = req.header("Authorization")
+      if(authHeader){
+        token = authHeader.split(" ")[1]
+      }
     }
+
+    //const token = req.header("Authorization").split[" "] req.header("Authorization") gives single header req.headers give all headers 
+
+    if(!token){
+      throw new errResponse("Unauthenticated",400)
+    }
+
+    const {_id} : any = jwt.verify(token,JWT_SECRET)
+
+    if(!_id){
+      throw new errResponse("Unauthenticated",400)
+    }
+
+    let client : UserType;
+    
+    client = await Client.findById(_id).select("+role")
+
+    if(!client){
+      client = await Editor.findById(_id).select("+role")
+    }
+
+    if(!client){
+      throw new errResponse("User not found",400)
+    }
+
+    req.user = client
+
+    next()
+  } catch (error) {
+    throw new errResponse("Invalid Request",400)
+  }
 
 }
 

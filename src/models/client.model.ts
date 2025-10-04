@@ -1,9 +1,9 @@
-import mongoose , {Types} from "mongoose";
+import mongoose , {Document, Types} from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 
-export interface IUser extends Document {
+export interface YoutuberType extends Document {
     username: string;
     email: string;
     password: string;
@@ -96,4 +96,5 @@ clientSchema.methods.generateToken = async function () {
 }
 
 
-export const Client = mongoose.model<IUser>("Client",clientSchema)
+export const Client = mongoose.model<YoutuberType>("Client",clientSchema)
+

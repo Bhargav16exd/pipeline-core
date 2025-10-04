@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+
+export interface DevCodeType extends Document {
+    email:string;
+    code:string;
+    redeemed:boolean
+}
+
 const devCode = new mongoose.Schema({
 
     email:{
@@ -19,4 +26,4 @@ const devCode = new mongoose.Schema({
 
 })
 
-export const Code = mongoose.model("Code",devCode)
+export const Code = mongoose.model<DevCodeType>("Code",devCode)

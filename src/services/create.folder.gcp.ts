@@ -5,7 +5,7 @@ import {StorageControlClient} from "@google-cloud/storage-control"
   Working : Uploads Video to the GCP using Client Library 
 */
 
-export default async function createFolderGCP (name:string){
+export default async function createFolderGCP(name:string){
 
   try {
        
