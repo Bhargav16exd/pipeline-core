@@ -1,11 +1,8 @@
 import app, { socketApp } from "./app"
 import { connectToDatabase } from "./db/db"
 import dotenv from "dotenv"
-import { listenToGCP } from "./services/pubsub"
-import  initQueues  from "./services/init.queues"
 import { exit } from "process"
-import initWorker from "./services/upload.status.worker"
-import ListenToSocket from "./socket/socket"
+import { startupSetup } from "./services/startup.setup"
 
 
 dotenv.config()
@@ -23,11 +20,9 @@ connectToDatabase()
         console.log(`Server is up and running on PORT : ${PORT}`)
     })
 
-    //Initialize Queue
-    initQueues()
-    initWorker()
-    ListenToSocket()
-    // listenToGCP()
+    //Perform Setup
+    startupSetup()
+
 })
 .catch((err)=>{
     console.log(`Some unexpected error has occured while connecting to DB : ${err}`)

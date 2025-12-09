@@ -72,7 +72,7 @@ app.get('/logs/:id',latest)
 
 
 // Error Handler
-app.use((err:any,_:Request,res: Response)=>{
+app.use((err:any,_:Request,res:any,next:NextFunction)=>{
 
   const statusCode = err.statusCode || 500 
   const message    = err.message    || "Something went wrong"
