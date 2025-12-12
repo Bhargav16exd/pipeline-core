@@ -13,7 +13,7 @@ import { NextFunction, Request, Response } from "express"
     Endpoint : TBD
     Working  : Editor Signup
 */
-export const signup = async (req:Request,res:Response,next:NextFunction) => {
+export const signup = async (req:any,res:Response,next:NextFunction) => {
    try {
 
     if(!req.team) throw new errResponse("Invalid Requeset",500)
@@ -63,7 +63,7 @@ export const signup = async (req:Request,res:Response,next:NextFunction) => {
     Working  : Editor Can Exit the Team
 */
 
-export const exit = async (req:Request ,res:Response ,next:NextFunction) => {
+export const exit = async (req:any ,res:Response ,next:NextFunction) => {
 
     if(!req.user)throw new errResponse("Invalid Request",400)
 
