@@ -100,7 +100,7 @@ export const exit = async (req:Request ,res:Response ,next:NextFunction) => {
 */
 
 // Get Editor Profile
-export const getEditor = async (req:Request,res:Response,next:NextFunction)=>{
+export const getEditor = async (req:any,res:Response,next:NextFunction)=>{
 
     try {
         const {id:editorId} = req.params
@@ -128,7 +128,7 @@ export const getEditor = async (req:Request,res:Response,next:NextFunction)=>{
     Working  : Search Editor Based on Its Username
 */
 
-export const changePassword = async (req:Request,res:Response,next:NextFunction) => {
+export const changePassword = async (req:any,res:Response,next:NextFunction) => {
 
     if(!req.user){
         throw new errResponse("Invalid Request",500)
@@ -178,7 +178,7 @@ export const changePassword = async (req:Request,res:Response,next:NextFunction)
     Endpoint : /api/editor/update
     Working  : Update Editor
 */
-export const update = async (req:Request,res:Response,next:NextFunction) => {
+export const update = async (req:any,res:Response,next:NextFunction) => {
 
    try {
 

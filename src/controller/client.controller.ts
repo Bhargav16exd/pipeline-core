@@ -159,7 +159,7 @@ export const logout = async(req:Request,res:Response,next:NextFunction)=>{
 	}
 }
 
-export const IAM = async(req:Request,res:Response,next:NextFunction)=>{
+export const IAM = async(req:any,res:Response,next:NextFunction)=>{
 	try {
 
 		if(!req.user){
@@ -195,7 +195,7 @@ export const IAM = async(req:Request,res:Response,next:NextFunction)=>{
     Endpoint : /api/client/logout
     Working  : Change Password 
 */
-export const changePassword = async (req:Request,res:Response,next:NextFunction) => {
+export const changePassword = async (req:any,res:Response,next:NextFunction) => {
 
 	try {
 

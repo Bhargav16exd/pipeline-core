@@ -6,7 +6,7 @@ import { NextFunction, Request } from "express"
 
 export type UserType = YoutuberType | EditorType
 
-export const authMiddleware = async (req:Request,_:any,next:NextFunction)=>{
+export const authMiddleware = async (req:any,_:any,next:NextFunction)=>{
 
   try {
 

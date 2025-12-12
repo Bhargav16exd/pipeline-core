@@ -4,7 +4,7 @@ import errResponse from "../utils/errResponse"
 
 
 
-async function VerifyInviteCode(req:Request,res:Response,next:NextFunction){
+async function VerifyInviteCode(req:any,res:Response,next:NextFunction){
 
     try {
 
