@@ -9,6 +9,7 @@ import { Code } from "../models/dev-code.model"
 import { Team } from "../models/team.model"
 import { CookieOptions, NextFunction, Request, Response } from "express"
 
+
 /*
     Endpoint : /api/client/code/signup
     Working  : Creates Account of Youtuber 
@@ -170,11 +171,19 @@ export const IAM = async(req:Request,res:Response,next:NextFunction)=>{
 		if(!team){
 			throw new errResponse("Invalid Team ID",400)
 		}
-		const user = {
-			client,
-			teamInviteCode:team.inviteCode
+
+		let profileData:any ={
+			client
+		} 
+
+		if(req.user.role === "YOUTUBER"){
+			profileData = {
+				client:client,
+				teamInviteCode:team.inviteCode
+			}
 		}
-		res.json(new sucResponse(true,200,"User fetched Sucess",user))
+
+		res.json(new sucResponse(true,200,"User fetched Sucess",profileData))
 
 	} catch (error) {
 		next(error)
