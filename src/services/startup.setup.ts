@@ -13,11 +13,11 @@ async function setCloudCorsConfig() {
 
 	//@ts-ignore
 	if(ENVIRONMENT === DEV_ENV){
-		origin = DEV_ENV_ORIGIN
+		ORIGIN = DEV_ENV_ORIGIN
 	}
 	//@ts-ignore
 	else if(ENVIRONMENT === PROD_ENV){
-		origin = PROD_ENV_ORIGIN
+		ORIGIN = PROD_ENV_ORIGIN
 	}
 
 	const storage = new Storage()
