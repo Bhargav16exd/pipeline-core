@@ -2,3 +2,4 @@ dist/
 node_modules/
 .env
 ultimate-task-437523-b9-1f3d12881b44.json
+.DS_Store
