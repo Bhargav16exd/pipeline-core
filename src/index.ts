@@ -7,21 +7,22 @@ import { startupSetup } from "./services/startup.setup"
 
 dotenv.config()
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT;
+const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT;
 
 connectToDatabase()
 .then(()=>{
 
-    socketApp.listen(9001,()=>{
-        console.log(`Socket Server is up and Running on PORT : ${9001}`)
-    })
+  socketApp.listen(WEBSOCKET_PORT, ()=>{
+    console.log(`Socket Server is up and Running on PORT : ${WEBSOCKET_PORT}`)
+  })
 
-    app.listen(PORT,()=>{
-        console.log(`Server is up and running on PORT : ${PORT}`)
-    })
+  app.listen(PORT,()=>{
+    console.log(`Server is up and running on PORT : ${PORT}`)
+  })
 
-    //Perform Setup
-    startupSetup()
+  //Perform Setup
+  startupSetup()
 
 })
 .catch((err)=>{
