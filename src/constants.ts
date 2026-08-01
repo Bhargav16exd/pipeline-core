@@ -9,7 +9,7 @@ export const CLOUD_CORS_METHODS = ["GET","HEAD","OPTIONS","PUT"]
 
 export const LOCAL_ENV_ORIGIN = "*"
 export const DEV_ENV_ORIGIN = process.env.DEV_ENV_ORIGIN
-export const PROD_ENV_ORIGIN = ""
+export const PROD_ENV_ORIGIN = process.env.PROD_ENV_ORIGIN
 
 export const LOCAL_ENV = "local"
 export const DEV_ENV = "dev"
