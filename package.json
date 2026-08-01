@@ -13,8 +13,8 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.826.0",
-    "@google-cloud/pubsub": "^4.7.2",
-    "@google-cloud/storage": "^7.13.0",
+    "@google-cloud/pubsub": "^5.0.0",
+    "@google-cloud/storage": "^5.18.3",
     "@google-cloud/storage-control": "^0.2.0",
     "@types/express-session": "^1.18.0",
     "@types/mongoose": "^5.11.97",
@@ -29,13 +29,13 @@
     "express": "^4.21.1",
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
-    "googleapis": "^144.0.0",
+    "googleapis": "^173.0.0",
     "ioredis": "^5.6.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "multer": "^2.0.1",
-    "nodemailer": "^7.0.3",
     "redis": "^5.8.0",
+    "resend": "^6.18.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

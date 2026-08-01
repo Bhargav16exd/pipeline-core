@@ -2,8 +2,7 @@ import { Storage } from "@google-cloud/storage";
 import ListenToSocket from "../socket/socket"
 import initQueues from "./init.queues"
 import initWorker from "./upload.status.worker"
-import { BUCKET_NAME, CLOUD_CORS_METHODS, CLOUD_CORS_RESPONSE_HEADERS, DEV_ENV, DEV_ENV_ORIGIN, ENVIRONMENT, LOCAL_ENV, LOCAL_ENV_ORIGIN, PROD_ENV, PROD_ENV_ORIGIN } from "../constants";
-
+import { BUCKET_NAME, CLOUD_CORS_METHODS, CLOUD_CORS_RESPONSE_HEADERS, DEV_ENV, DEV_ENV_ORIGIN, ENVIRONMENT, LOCAL_ENV_ORIGIN, PROD_ENV, PROD_ENV_ORIGIN } from "../constants";
 
 
 //FUNCTION SETUP CLOUD CORS CONFIGRATION BASED ON ENVIRONMENT

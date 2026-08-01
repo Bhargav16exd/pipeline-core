@@ -31,7 +31,7 @@ export const signup = async (req:any,res:Response,next:NextFunction) => {
         throw new errResponse("Username already exists",400)
     }
 
-    const url = await uploadImageToAwsS3(profilePicture)
+    const url =  " "
 
     if(!url){
         throw new errResponse("Internal Server Error",500)
