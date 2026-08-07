@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { ControllerInputType } from "../../types/misc.types";
 import errResponse from "../../utils/errResponse";
 import { Youtuber } from "../../models/youtuber-model/youtuber.model";
 import { Editor } from "../../models/editor-model/editor.model";
@@ -9,7 +8,7 @@ import { Otp } from "../../models/otp-model/otp.model";
 import { sendOtpEmail } from "../../services/email.service";
 import { OTP_ONBOARDING_EXPIRY } from "./otp.constants";
 
-export const sendOtp = async ({ req, res, next }: ControllerInputType): Promise<void> => {
+export const sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		//Get User Email Id
 		const { email } = req.body;

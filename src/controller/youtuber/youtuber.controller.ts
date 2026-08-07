@@ -10,9 +10,8 @@ import { createTeam, linkYoutuberTeam } from "../../services/team.utils";
 import { SubscriptionTypeEnum } from "../../types/subscription.types";
 
 /*
-  Endpoint : /api/youtuber/code/signup
-  Working  : Creates Account of Youtuber 
-  Category : API Controller
+  Endpoint : /youtuber/signup
+  Working  : Creates Account of Youtuber
 */
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -59,19 +58,18 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 			{ session: accountCreationSession }
 		);
 
-		const team = await createTeam(youtuber[0]._id, youtuber[0].username);
-		await linkYoutuberTeam(youtuber[0].username, team._id);
-
 		// ---- call external services ----
-
 		const bucketResponse = await createFolderInStorageBucket(username);
 		if (!bucketResponse) throw new errResponse("Internal Server Error", 500);
 
 		accountCreationSession.commitTransaction();
 		// ---- account creation transaction end ----
 
-		//Notfiy
-		await sendOnBoardEmailYoutuber(youtuber);
+		const team = await createTeam(youtuber[0]._id, youtuber[0].username);
+		await linkYoutuberTeam(youtuber[0].username, team._id);
+
+		//notfiy
+		await sendOnBoardEmailYoutuber(email, name);
 		res.json(new sucResponse(true, 200, "Account Created Successfully"));
 	} catch (error) {
 		await accountCreationSession.abortTransaction();

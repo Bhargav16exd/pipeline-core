@@ -4,8 +4,8 @@
 */
 
 export const couponCodeMail = {
-  subject: "Your Signup Coupon Code for Cumin.Cloud",
-  body: `
+	subject: "Your Signup Coupon Code for Cumin.Cloud",
+	body: `
     Hi {{username}},
 
     We're excited to have you on board at Cumin.Cloud!
@@ -18,13 +18,12 @@ export const couponCodeMail = {
 
     Cheers,  
     The Cumin.Cloud Team
-  `,
+  `
 };
 
-
 export const otpVerificationMail = {
-  subject: "Here is your one time password for Cumin.Cloud",
-  body: `
+	subject: "Here is your one time password for Cumin.Cloud",
+	body: `
         Hi {{username}},
 
         Here is your one time password for Cumin.Cloud
@@ -35,11 +34,11 @@ export const otpVerificationMail = {
 
         Cheers,
         The Pipeline Team
-        `,
+        `
 };
 export const emailOnboardYoutuber = {
-  subject: "Welcome to the Creator Dashboard – Let’s Build Your Editing Team!",
-  body: `
+	subject: "Welcome to the Creator Dashboard – Let’s Build Your Editing Team!",
+	body: `
         Hi {{username}},
 
         Welcome to our platform built for YouTubers like you!
@@ -54,12 +53,12 @@ export const emailOnboardYoutuber = {
 
         Ready to roll,
         The Pipeline Team
-        `,
+        `
 };
 
 export const emailOnboardEditor = {
-  subject: "Welcome Editor – Your Creative Journey Begins!",
-  body: `
+	subject: "Welcome Editor – Your Creative Journey Begins!",
+	body: `
     Hi {{username}},
 
     You’ve officially joined our community of skilled editors!
@@ -73,12 +72,12 @@ export const emailOnboardEditor = {
 
     Cheers,  
     The Pipeline Team
-`,
+`
 };
 
 export const emailSignIn = {
-  subject: "Login Alert – You're In!",
-  body: `
+	subject: "Login Alert – You're In!",
+	body: `
     Hi {{username}},
 
     You’ve successfully signed in to your account.
@@ -87,12 +86,12 @@ export const emailSignIn = {
 
     Stay creative,  
     The Pipeline Team
-    `,
+    `
 };
 
 export const emailPasswordChange = {
-  subject: "Password Changed Successfully",
-  body: `
+	subject: "Password Changed Successfully",
+	body: `
     Hi {{username}},
 
     Your password has been updated.
@@ -101,12 +100,12 @@ export const emailPasswordChange = {
 
     Stay secure,  
     The Pipeline Team
-`,
+`
 };
 
 export const emailEditorAddedToTeam = {
-  subject: "You’ve Been Added to a New Team!",
-  body: `
+	subject: "You’ve Been Added to a New Team!",
+	body: `
     Hi {{username}},
 
     Great news! You’ve been added to the team {{teamName}}.
@@ -115,12 +114,12 @@ export const emailEditorAddedToTeam = {
 
     Let’s make magic happen,  
     The Pipeline Team
-`,
+`
 };
 
 export const emailEditorRemovedFromTeam = {
-  subject: "You’ve Been Removed from a Team",
-  body: `
+	subject: "You’ve Been Removed from a Team",
+	body: `
     Hi {{username}},
 
     You’ve been removed from the team {{teamName}}.
@@ -129,12 +128,12 @@ export const emailEditorRemovedFromTeam = {
 
     Keep editing,  
     The Pipeline Team
-`,
+`
 };
 
 export const emailEditorAddedForYoutuber = {
-  subject: "New Editor Added to Your Team!",
-  body: `
+	subject: "New Editor Added to Your Team!",
+	body: `
     Hi {{username}},
 
     You just added {{editorName}} to your team.
@@ -148,12 +147,12 @@ export const emailEditorAddedForYoutuber = {
 
     Keep creating,  
     The Pipeline Team
-    `,
+    `
 };
 
 export const emailEditorRemovedForYoutuber = {
-  subject: "Editor Removed from Your Team",
-  body: `
+	subject: "Editor Removed from Your Team",
+	body: `
     Hi {{username}},
 
     You’ve successfully removed {{editorName}} from your team.
@@ -167,5 +166,5 @@ export const emailEditorRemovedForYoutuber = {
 
     Stay in control,  
     The Pipeline Team
-    `,
+    `
 };
