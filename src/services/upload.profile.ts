@@ -1,37 +1,19 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import fs from "fs"
+import fs from "fs";
+import {
+	MINIO_ENDPOINT,
+	MINIO_PORT,
+	MINIO_PUBLIC_BUCKET_NAME,
+	minIOClient
+} from "./init.minio.bucket";
 
-//@ts-ignore
-const s3 :any = new S3Client ({
-    region: process.env.AWS_REGION,
-    //@ts-ignore
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-})
+export const uploadFileToObjectStore = async (file: Express.Multer.File): Promise<string> => {
+	await minIOClient.fPutObject(`${MINIO_PUBLIC_BUCKET_NAME}`, file.originalname, file.path);
 
+	const objectUrl =
+		`http://${MINIO_ENDPOINT}:${MINIO_PORT}` +
+		`/${MINIO_PUBLIC_BUCKET_NAME}` +
+		`/${encodeURIComponent(file.originalname)}`;
 
-export const uploadImageToAwsS3 = async (file:Express.Multer.File):Promise<string>=>{
-    try {
-
-        const fileContent = fs.readFileSync(`${file.destination}/${file.originalname}`)
-
-        const params = {
-            Bucket: process.env.AWS_S3_BUCKET_NAME,
-            Key: file.originalname,
-            Body: fileContent,
-          };
-
-          const command = new PutObjectCommand(params);
-          await s3.send(command);
-
-          const url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${file.originalname}`;
-
-           
-          fs.unlinkSync(`${file.destination}/${file.originalname}`)
-
-          return url
-        
-    } catch (error) {
-        throw(error)
-    }
-}
+	fs.unlinkSync(`${file.destination}/${file.originalname}`);
+	return objectUrl;
+};
